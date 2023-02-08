@@ -20,7 +20,9 @@
   generate();
 </script>
 
-<div class="my-16 mx-auto flex items-start justify-center gap-6">
+<div
+  class="mx-auto my-1 grid w-fit items-start justify-center gap-8 sm:my-4 md:grid-cols-2-autoFirst"
+>
   <div class="flex h-72 min-w-72 items-center justify-center rounded-xl border p-8 shadow-md">
     <span class="text-center tabular-nums {textSize}">
       {random}
@@ -28,23 +30,23 @@
   </div>
   <div>
     <h1 class="mb-6 text-2xl font-bold">Random number generator</h1>
-    <div class="flex gap-6">
-      <div>
+    <div class="flex flex-wrap gap-6">
+      <div class="flex-grow">
         <label class="mb-1 block" for="start">From</label>
         <input
           type="number"
-          class="rounded border px-3 py-2 shadow-sm"
+          class="w-full rounded border px-3 py-2 shadow-sm"
           name="start"
           id="start"
           placeholder="0"
           bind:value={start}
         />
       </div>
-      <div>
+      <div class="flex-grow">
         <label class="mb-1 block" for="end">To</label>
         <input
           type="number"
-          class="rounded border px-3 py-2 shadow-sm"
+          class="w-full rounded border px-3 py-2 shadow-sm"
           name="end"
           id="end"
           placeholder="10"

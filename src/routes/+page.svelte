@@ -1,4 +1,4 @@
-<div class="my-6 bg-green-200/0">
+<div class="mb-6 bg-green-200/0">
   <h2 class="">Lorem ipsum dolor sit amet.</h2>
 </div>
 <div
