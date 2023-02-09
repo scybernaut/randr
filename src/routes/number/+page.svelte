@@ -1,4 +1,6 @@
 <script>
+  import Tools from "$lib/tools.svelte";
+
   let start = 0;
   let end = 10;
 
@@ -56,9 +58,13 @@
     </div>
     <button
       on:click={generate}
-      class="mt-6 w-full rounded bg-blue-600 px-4 py-3 text-lg text-white shadow-md transition-colors duration-100 hover:bg-blue-700 active:bg-blue-600"
+      class="mt-6 w-full rounded bg-blue-600 px-4 py-3 text-lg text-white shadow-md outline-none transition-colors duration-100 hover:bg-blue-700 focus:ring-2 active:bg-blue-600"
     >
       Generate
     </button>
+  </div>
+  <div class="mt-4 md:col-span-2">
+    <h1 class="mb-4 text-xl font-bold">See also</h1>
+    <Tools exclude="number" />
   </div>
 </div>
