@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require("tailwindcss/colors");
+
 module.exports = {
   content: ["./src/**/*.{html,svelte,js}"],
   theme: {
@@ -8,8 +10,13 @@ module.exports = {
       mono: "monospace"
     },
     extend: {
+      colors: {
+        primary: colors.indigo,
+        secondary: colors.pink,
+        gray: colors.slate
+      },
       minWidth: {
-        72: "18rem"
+        68: "17rem"
       },
       minHeight: {
         72: "18rem"
