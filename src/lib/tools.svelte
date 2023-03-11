@@ -9,8 +9,7 @@
     { id: "wheel", name: "List: Wheel", href: "/wheel" },
     { id: "list", name: "List: Minimal", href: "/list" },
     { id: "tarot", name: "Tarot", href: "/tarot" },
-    { id: "number", name: "Number", href: "/number" },
-    { id: "number", name: "Number", href: "/number" }
+    { id: "moonblocks", name: "Moon Blocks (Jiaobei)", href: "/moonblocks" }
   ];
 
   const toolsToShow = TOOLS.filter((tool) => tool.id !== exclude);

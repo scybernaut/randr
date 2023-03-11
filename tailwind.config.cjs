@@ -11,6 +11,9 @@ module.exports = {
       minWidth: {
         72: "18rem"
       },
+      minHeight: {
+        72: "18rem"
+      },
       gridTemplateColumns: {
         "2-autoFirst": "auto 1fr"
       }

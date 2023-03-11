@@ -3,7 +3,7 @@
 </script>
 
 <div class="mb-6 bg-green-200/0">
-  <h2 class="">Lorem ipsum dolor sit amet.</h2>
+  <h2 class="">A collection of random tools.</h2>
 </div>
 <div
   class="mb-4 flex w-full items-center gap-2 rounded border px-3 py-2 shadow-sm ring-blue-500 ring-opacity-100 focus-within:ring-2"

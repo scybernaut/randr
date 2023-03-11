@@ -1,16 +1,12 @@
 <script>
   import Tools from "$lib/tools.svelte";
+  import { sleep } from "$lib/utils";
 
   let start = 0;
   let end = 10;
 
   let random = "";
   let textSize = "text-8xl";
-
-  const sleep = (ms) =>
-    new Promise((res) => {
-      setTimeout(res, ms);
-    });
 
   const generate = async () => {
     textSize = end < 9999 ? "text-8xl" : "text-6xl";
