@@ -1,5 +1,5 @@
 <script>
-  import Tools from "$lib/tools.svelte";
+  import Tools from "$lib/Tools.svelte";
   import clsx from "clsx";
 </script>
 
