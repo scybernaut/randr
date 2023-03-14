@@ -101,6 +101,6 @@
   </div>
 </div>
 <div class={twMerge("mt-8", PAGE_PADDING)}>
-  <h1 class="mb-4 text-xl font-bold">See also</h1>
+  <h1 class="mb-4 text-xl font-bold">More generators</h1>
   <Tools exclude="list" />
 </div>

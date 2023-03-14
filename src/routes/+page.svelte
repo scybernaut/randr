@@ -9,13 +9,7 @@
     <h1 class="mb-1 text-3xl font-bold">Random generators</h1>
     <h2 class="text italic">Chaos is within your reach</h2>
   </div>
-  <div
-    class={twMerge(
-      "relative mb-4 w-full items-center rounded border bg-white shadow-sm",
-      "ring-primary-500 ring-opacity-100 focus-visible:ring-2",
-      "dark:border-0 dark:bg-gray-800"
-    )}
-  >
+  <div class="relative mb-4 w-full items-center">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
@@ -31,7 +25,11 @@
       />
     </svg>
     <input
-      class="w-full bg-transparent px-3 py-2 pl-10 outline-none placeholder:text-gray-400"
+      class={twMerge(
+        "w-full rounded border bg-white px-3 py-2 pl-10 shadow-sm placeholder:text-gray-400",
+        "dark:border-transparent dark:bg-gray-800",
+        "outline-none ring-primary-500 ring-opacity-50 focus-visible:border-primary-500 focus-visible:ring-2"
+      )}
       type="text"
       name="search"
       id="search"

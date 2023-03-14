@@ -16,9 +16,16 @@
   let end = INIT_END;
   let count = INIT_COUNT;
 
+  let unique = false;
+
   let warnStartGtEnd = false;
   $: warnStartGtEnd = fieldsInvalid.every((f) => !f) && start > end;
 
+  let warnAmountGtRange = false;
+  $: if (unique) {
+    const [min, max] = start > end ? [end, start] : [start, end];
+    warnAmountGtRange = max - min + 1 < count;
+  }
   const fieldsInvalid = [false, false, false];
 
   const numbers = [];
@@ -27,7 +34,7 @@
   let textSize = ["text-3xl", "sm:text-5xl"];
   let boxPadding = ["p-2", "sm:p-4"];
 
-  const randomize = async (index) => {
+  const randomize = async (index, finalValue) => {
     const generateCount = mapToRange(index, 0, count - 1, MIN_GENERATE_COUNT, MAX_GENERATE_COUNT);
 
     const [min, max] = start > end ? [end, start] : [start, end];
@@ -35,42 +42,18 @@
       numbers[index] = (Math.floor(Math.random() * (max - min + 1)) + min).toLocaleString("en-US");
       await sleep(20);
     }
+
+    if (finalValue) numbers[index] = finalValue.toLocaleString("en-US");
   };
 
-  const getAverageLength = (min, max) => {
-    if (min < 0 && max > 0) {
-      const absMin = Math.abs(min);
-      return (
-        (absMin * getAverageLength(0, absMin) + max * getAverageLength(0, max) - 1) / (absMin + max)
-      );
-    } else if (min < 0 && max < 0) {
-      return getAverageLength(Math.abs(max), Math.abs(min));
-    }
-    // min > 0 && max < 0 is impossible since min and max is always in the correct order
-
+  const getMaxLength = (min, max) => {
     const minLength = Math.ceil(min).toString().length;
     const maxLength = Math.floor(max).toString().length;
 
-    if (minLength == maxLength) return minLength;
-
-    let sum = 0;
-
-    // say 14 - 2500
-    // 1: 0
-    // 2: 1e2 - 14
-    // 3: 1e3 - 1e2
-    // 4: 2500 - 1e3 + 1
-
-    sum += (10 ** minLength - min) * minLength; // 100 - 24 = 86 numbers with length 2 (including 24)
-    for (let length = minLength + 1; length < maxLength; length++) {
-      sum += (10 ** length - 10 ** (length - 1)) * length;
-    }
-    sum += (max - 10 ** (maxLength - 1) + 1) * maxLength; // 132 - 100 + 1 = 33 numbers with length 3
-
-    return sum / (max - min + 1);
+    return Math.max(minLength, maxLength);
   };
 
-  const adjustStyles = (avgLength) => {
+  const adjustStyles = (maxLength, count) => {
     gridCols = ["grid-cols-4", "sm:grid-cols-4"];
     textSize = ["text-3xl", "sm:text-5xl"];
     boxPadding = ["p-5", "sm:p-10"];
@@ -80,18 +63,26 @@
       boxPadding[1] = "sm:p-8";
     }
 
-    if (avgLength > 6) {
-      gridCols = ["grid-cols-1", "sm:grid-cols-2"];
-      textSize = ["text-2xl", "sm:text-3xl"];
-      boxPadding[1] = "sm:p-4";
-      boxPadding[0] = "p-3";
-    } else if (avgLength >= 3) {
-      gridCols = ["grid-cols-2", "sm:grid-cols-4"];
-      textSize = ["text-2xl", "sm:text-3xl"];
-      boxPadding[1] = "sm:p-8";
-      boxPadding[0] = "p-3";
-    } else if (avgLength >= 2) {
+    let assumedLength = maxLength;
+    if (assumedLength >= 2) {
+      textSize[1] = "sm:text-4xl";
+    }
+    if (assumedLength >= 3) {
       gridCols[0] = "grid-cols-3";
+      if (count > 8) gridCols[1] = "sm:grid-cols-4";
+    }
+    if (assumedLength >= 4) {
+      gridCols = ["grid-cols-2", "sm:grid-cols-3"];
+      textSize = ["text-2xl", "sm:text-3xl"];
+      boxPadding = ["p-3", "sm:p-6"];
+    }
+    if (assumedLength >= 6) {
+      gridCols[0] = "grid-cols-1";
+    }
+    if (assumedLength >= 7) {
+      textSize[1] = "sm:text-2xl";
+      gridCols[1] = "sm:grid-cols-2";
+      boxPadding[1] = "sm:p-3";
     }
   };
 
@@ -102,13 +93,27 @@
 
     const [min, max] = start > end ? [end, start] : [start, end];
 
-    const avgLength = getAverageLength(min, max);
+    const maxLength = getMaxLength(min, max - 1);
 
-    adjustStyles(avgLength);
+    adjustStyles(maxLength, count);
 
-    numbers.length = count;
-    if (count < 0) return;
-    for (let i = 0; i < count; i++) randomize(i);
+    const randomizeCount = unique ? Math.min(count, max - min + 1) : count;
+
+    const uniqueResults = new Set();
+    if (unique) {
+      while (uniqueResults.size < randomizeCount)
+        uniqueResults.add(Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+
+    const uniqueIter = uniqueResults.values();
+
+    if (randomizeCount < 0) return;
+    for (let i = 0; i < randomizeCount; i++) {
+      if (unique) randomize(i, uniqueIter.next().value);
+      else randomize(i);
+    }
+
+    numbers.length = randomizeCount;
   };
   randomizeAll();
 </script>
@@ -123,7 +128,7 @@
       )}
     >
       <span
-        class="absolute bottom-0.5 right-1 select-none text-xs text-gray-300 dark:text-gray-600 sm:bottom-1 sm:right-2 sm:text-sm"
+        class="absolute bottom-0.5 right-1 select-none text-xs text-gray-300 dark:text-gray-600 sm:bottom-1.5 sm:right-2.5 sm:text-sm"
       >
         {i + 1}
       </span>
@@ -143,9 +148,9 @@
     class="absolute top-0 left-0 right-0 z-10 h-8 -translate-y-full bg-gradient-to-t from-gray-50 dark:from-gray-900"
     aria-hidden="true"
   />
-  <h1 class="mb-4 text-3xl font-bold">Random numbers</h1>
-  <div class="mb-8 w-full sm:w-fit">
-    <div class="mb-4 flex w-full flex-wrap gap-4">
+  <h1 class="mb-4 text-2xl font-bold sm:text-3xl">Random numbers</h1>
+  <div class="mb-6 w-full sm:w-fit" on:keyup={(e) => e.key == "Enter" && randomizeAll()}>
+    <div class="mb-3 flex w-full flex-wrap gap-4">
       <NumberInput
         label="From"
         maxDigits="8"
@@ -171,15 +176,42 @@
       numberPattern={/^[0-9,]+$/}
       bind:intValue={count}
       bind:isInvalid={fieldsInvalid[0]}
+      warning={warnAmountGtRange}
       initial={INIT_COUNT}
-      class="w-full"
+      class="mb-3 w-full"
     />
+    <label class="flex w-fit items-center gap-1.5">
+      <div class="relative h-5 w-5">
+        <input
+          type="checkbox"
+          class={twMerge(
+            "absolute inset-0 appearance-none rounded border bg-white shadow-sm checked:bg-primary-600",
+            "dark:border-transparent dark:bg-gray-700 dark:checked:bg-primary-600",
+            "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50"
+          )}
+          bind:checked={unique}
+        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class={twMerge("absolute inset-0 m-0.5 text-white", unique ? "visible" : "invisible")}
+        >
+          <path
+            fill-rule="evenodd"
+            d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <p class="mt-1">Unique</p>
+    </label>
   </div>
-  <Button on:click={randomizeAll} disabled={fieldsInvalid.some((f) => f)} class="w-full sm:w-max"
-    >Generate</Button
-  >
+  <Button on:click={randomizeAll} disabled={fieldsInvalid.some((f) => f)} class="w-full sm:w-max">
+    Generate
+  </Button>
 </div>
 <div class={twMerge("mb-8", PAGE_PADDING)}>
-  <h1 class="mb-4 text-xl font-bold">See also</h1>
+  <h1 class="mb-4 text-xl font-bold">More generators</h1>
   <Tools exclude="numbers" />
 </div>

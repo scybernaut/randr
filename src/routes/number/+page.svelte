@@ -51,7 +51,7 @@
     </span>
   </div>
   <div class="flex-grow">
-    <h1 class="mb-6 text-3xl font-bold">Random number</h1>
+    <h1 class="mb-6 text-2xl font-bold sm:text-3xl">Random number</h1>
     <div class="mb-4 flex w-full flex-wrap justify-start gap-4">
       <NumberInput
         class="w-36 grow sm:grow-0"
@@ -76,6 +76,6 @@
   </div>
 </div>
 <div class={twMerge("mt-8", PAGE_PADDING)}>
-  <h1 class="mb-4 text-xl font-bold">See also</h1>
+  <h1 class="mb-4 text-xl font-bold">More generators</h1>
   <Tools exclude="number" />
 </div>
