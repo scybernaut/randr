@@ -2,10 +2,10 @@
   import Button from "$lib/Button.svelte";
   import Tools from "$lib/Tools.svelte";
 
-  import { sleep } from "$lib/utils";
+  import { sleep, PAGE_PADDING } from "$lib/utils";
   import { fly } from "svelte/transition";
   import { quartOut } from "svelte/easing";
-  import clsx from "clsx";
+  import { twMerge } from "tailwind-merge";
 
   const placeholder = "Liam\nOlivia\nNoah\nEmma";
 
@@ -34,13 +34,6 @@
       Math.floor(Math.random() * (MAX_PRE_UPDATES - MIN_PRE_UPDATES + 1)) + MIN_PRE_UPDATES;
 
     let updateCount = preUpdateCount + (pickedIndex - (preUpdateCount % items.length) + 1);
-    // console.log(
-    //   preUpdateCount,
-    //   updateCount,
-    //   pickedIndex,
-    //   items[(updateCount - 1) % items.length],
-    //   items[pickedIndex]
-    // );
 
     for (let i = 0; i < updateCount; i++) {
       picked = items[i % items.length];
@@ -56,19 +49,24 @@
   };
 </script>
 
-<div class="mx-auto my-1 flex w-full flex-col justify-center gap-8 sm:my-4 sm:flex-row-reverse">
+<div
+  class={twMerge(
+    "mx-auto my-1 flex w-full flex-col justify-center gap-8 sm:my-4 sm:flex-row-reverse",
+    PAGE_PADDING
+  )}
+>
   <div
-    class={clsx(
+    class={twMerge(
       "relative h-72 w-full items-center justify-center gap-2 rounded-xl border bg-white p-6 shadow-md sm:w-72",
-      "dark:border-0 dark:bg-gray-800 dark:shadow-lg"
+      "dark:border-0 dark:bg-gray-800 dark:shadow-2xl"
     )}
   >
     {#key timesUpdated}
       <span
-        class={clsx(
+        class={twMerge(
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-          "text-3xl font-medium transition-all duration-100 ease-in-out",
-          flashing && "scale-105 text-primary-600 dark:text-primary-400"
+          "text-3xl font-medium transition-all duration-150 ease-out",
+          flashing && "scale-125 text-primary-600 dark:text-primary-400"
         )}
         in:fly={{ y: -40, duration: waitTime, easing: quartOut }}
         out:fly={{ y: 40, duration: waitTime, easing: quartOut }}
@@ -90,23 +88,19 @@
         cols="30"
         rows="8"
         {placeholder}
-        class={clsx(
-          "w-full rounded border bg-white py-2 px-3 leading-relaxed shadow-sm dark:border-gray-700 dark:bg-transparent",
-          "outline-none ring-primary-500 ring-opacity-50 focus-visible:border-primary-500 focus-visible:ring-2"
+        class={twMerge(
+          "w-full rounded border bg-white px-3 py-2 leading-relaxed shadow-sm",
+          "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50",
+          "placeholder:text-gray-300 dark:placeholder:text-gray-500",
+          "dark:border-transparent dark:bg-gray-800 dark:shadow focus-visible:dark:border-primary-500"
         )}
         bind:value={inputText}
       />
     </label>
     <Button on:click={generate} class="w-full sm:w-max" disabled={isInvalid}>Generate</Button>
-    <!-- <button
-      class="mt-4 w-full rounded bg-primary-600 px-4 py-3 text-lg text-white shadow-md outline-none transition-colors duration-100 hover:bg-primary-700 focus:ring-2 active:bg-primary-600"
-      on:click={generate}
-    >
-      Generate
-    </button> -->
   </div>
 </div>
-<div class="mt-8">
+<div class={twMerge("mt-8", PAGE_PADDING)}>
   <h1 class="mb-4 text-xl font-bold">See also</h1>
   <Tools exclude="list" />
 </div>

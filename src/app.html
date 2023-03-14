@@ -11,13 +11,15 @@
     data-sveltekit-preload-data="hover"
     class="bg-gray-50 font-body text-gray-900 selection:bg-primary-500/40 dark:bg-gray-900 dark:text-gray-50"
   >
-    <header class="border-b border-gray-200 bg-white dark:border-0 dark:bg-gray-900">
-      <div class="mx-auto max-w-screen-md p-4 px-6 sm:px-8">
+    <header
+      class="fixed top-0 left-0 right-0 z-50 h-16 border-b border-gray-200 bg-white dark:border-0 dark:bg-gray-900"
+    >
+      <div class="mx-auto flex h-full max-w-screen-md items-center p-4 px-6 sm:px-8">
         <a class="text-xl font-bold" href="/">
           randr<span class="text-secondary-600 dark:text-secondary-500">.</span>
         </a>
       </div>
     </header>
-    <main class="mx-auto max-w-screen-md py-4 px-6 sm:px-8">%sveltekit.body%</main>
+    <main class="mx-auto mt-16 max-w-screen-md py-4">%sveltekit.body%</main>
   </body>
 </html>

@@ -1,5 +1,5 @@
 <script>
-  import clsx from "clsx";
+  import { twMerge } from "tailwind-merge";
 
   let exclude = null;
   let className = "";
@@ -8,6 +8,7 @@
 
   const TOOLS = [
     { id: "number", name: "Number", href: "/number" },
+    { id: "numbers", name: "Numbers", href: "/numbers" },
     { id: "wheel", name: "List: Wheel", href: "/wheel", disabled: true },
     { id: "list", name: "List: Minimal", href: "/list" },
     { id: "tarot", name: "Tarot", href: "/tarot", disabled: true },
@@ -20,11 +21,11 @@
 <div class={["grid gap-x-3 gap-y-3 sm:grid-cols-3", className].join(" ")}>
   {#each toolsToShow as tool}
     <a
-      class={clsx(
+      class={twMerge(
         "flex items-center justify-between rounded border bg-white px-4 py-3 shadow-sm transition-colors duration-300",
-        "outline-none ring-primary-500 ring-opacity-50 focus-within:border-primary-500 focus-within:bg-primary-50 focus-within:ring-2 hover:border-primary-500 hover:bg-primary-50",
+        "outline-none ring-primary-500 ring-opacity-50 hover:border-primary-500 hover:bg-primary-50 focus-visible:border-primary-500 focus-visible:bg-primary-50 focus-visible:ring-2",
         "dark:border-gray-700 dark:bg-gray-900",
-        "focus-within:dark:border-primary-500 focus-within:dark:bg-primary-900 hover:dark:border-primary-500 hover:dark:bg-primary-900"
+        "hover:dark:border-primary-500 hover:dark:bg-primary-900 focus-visible:dark:border-primary-500 focus-visible:dark:bg-primary-900"
       )}
       href={tool.href}
     >
