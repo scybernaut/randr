@@ -10,10 +10,8 @@
 
   export let numberPattern = /^-?[0-9,]+$/;
 
-  let rawValue = initial.toString();
   export let intValue;
-
-  $: intValue = parseInt(rawValue.replaceAll(",", ""));
+  $: intValue = parseInt(initial.toString().replaceAll(",", ""));
 
   let classes = "";
   export { classes as class };
@@ -35,8 +33,13 @@
         )}
         maxlength={maxDigits}
         {placeholder}
-        bind:value={rawValue}
-        on:input={(_) => (isInvalid = !rawValue.match(numberPattern) || isNaN(intValue))}
+        value={initial?.toString() ?? ""}
+        on:input={(ev) => {
+          const newValue = ev.target.value;
+          const parsed = parseInt(newValue.replaceAll(",", ""));
+          isInvalid = !newValue.match(numberPattern) || isNaN(parsed);
+          if (!isInvalid) intValue = parsed;
+        }}
       />
       {#if isInvalid}
         <svg

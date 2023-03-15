@@ -2,14 +2,27 @@
   import Button from "$lib/Button.svelte";
   import Tools from "$lib/Tools.svelte";
 
-  import { sleep, PAGE_PADDING } from "$lib/utils";
+  import { sleep, PAGE_PADDING, loadConfig } from "$lib/utils";
   import { fly } from "svelte/transition";
   import { quartOut } from "svelte/easing";
   import { twMerge } from "tailwind-merge";
 
+  import { writable } from "svelte/store";
+  import { onMount } from "svelte";
+
   const placeholder = "Liam\nOlivia\nNoah\nEmma";
 
-  let inputText = placeholder;
+  const config = writable({
+    inputText: placeholder
+  });
+
+  onMount(() => {
+    if (typeof window === "undefined") return;
+
+    loadConfig(window.localStorage, "list", config);
+
+    generate();
+  });
 
   let delim = "\n";
   let items = [];
@@ -18,7 +31,7 @@
 
   let timesUpdated = 0;
 
-  $: items = inputText.split(delim).filter((s) => s && !s.match(/^\s+$/));
+  $: items = $config.inputText.split(delim).filter((s) => s && !s.match(/^\s+$/));
   $: isInvalid = items.length === 0;
 
   let picked = "Noah";
@@ -94,7 +107,7 @@
           "placeholder:text-gray-300 dark:placeholder:text-gray-500",
           "dark:border-transparent dark:bg-gray-800 dark:shadow focus-visible:dark:border-primary-500"
         )}
-        bind:value={inputText}
+        bind:value={$config.inputText}
       />
     </label>
     <Button on:click={generate} class="w-full sm:w-max" disabled={isInvalid}>Generate</Button>

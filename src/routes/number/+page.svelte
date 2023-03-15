@@ -1,15 +1,28 @@
 <script>
   import Button from "$lib/Button.svelte";
   import Tools from "$lib/Tools.svelte";
-  import { sleep, PAGE_PADDING } from "$lib/utils";
+  import { sleep, PAGE_PADDING, loadConfig } from "$lib/utils";
   import NumberInput from "$lib/NumberInput.svelte";
   import { twMerge } from "tailwind-merge";
 
-  let start = 1;
-  let end = 10;
+  import { writable } from "svelte/store";
+  import { onMount } from "svelte";
+
+  const config = writable({
+    start: 1,
+    end: 10
+  });
+
+  onMount(() => {
+    if (typeof window === "undefined") return;
+
+    loadConfig(window.localStorage, "number", config);
+
+    generate();
+  });
 
   let warnStartGtEnd = false;
-  $: warnStartGtEnd = start > end;
+  $: warnStartGtEnd = $config.start > $config.end;
 
   let GENERATE_COUNT = 10;
 
@@ -20,6 +33,8 @@
   let invalidEnd = false;
 
   const generate = async () => {
+    const { start, end } = $config;
+
     const [min, max] = start > end ? [end, start] : [start, end];
 
     if (max > 9999999) textSize = "text-4xl";
@@ -31,7 +46,6 @@
       await sleep(20);
     }
   };
-  generate();
 </script>
 
 <div
@@ -52,27 +66,30 @@
   </div>
   <div class="flex-grow">
     <h1 class="mb-6 text-2xl font-bold sm:text-3xl">Random number</h1>
-    <div class="mb-4 flex w-full flex-wrap justify-start gap-4">
+    <div
+      class="mb-4 flex w-full flex-wrap justify-start gap-4"
+      on:keyup={(e) => e.key == "Enter" && !(invalidStart || invalidEnd) && generate()}
+    >
       <NumberInput
         class="w-36 grow sm:grow-0"
         label="From"
-        bind:intValue={start}
+        bind:intValue={$config.start}
         bind:isInvalid={invalidStart}
         warning={warnStartGtEnd}
-        initial="0"
+        initial={$config.start}
       />
       <NumberInput
         class="w-36 grow sm:grow-0"
         label="To"
-        bind:intValue={end}
+        bind:intValue={$config.end}
         bind:isInvalid={invalidEnd}
         warning={warnStartGtEnd}
-        initial="10"
+        initial={$config.end}
       />
     </div>
-    <Button on:click={generate} class="w-full sm:w-max" disabled={invalidStart || invalidEnd}
-      >Generate</Button
-    >
+    <Button on:click={generate} class="w-full sm:w-max" disabled={invalidStart || invalidEnd}>
+      Generate
+    </Button>
   </div>
 </div>
 <div class={twMerge("mt-8", PAGE_PADDING)}>

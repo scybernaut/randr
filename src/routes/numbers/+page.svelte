@@ -4,27 +4,42 @@
   import Tools from "$lib/Tools.svelte";
   import { twMerge } from "tailwind-merge";
 
-  import { sleep, mapToRange, PAGE_PADDING } from "$lib/utils.js";
+  import { sleep, mapToRange, PAGE_PADDING, loadConfig } from "$lib/utils.js";
+  import { onMount } from "svelte";
+  import { writable } from "svelte/store";
 
   const INIT_START = 1,
     INIT_END = 10,
-    INIT_COUNT = 8;
+    INIT_COUNT = 8,
+    INIT_UNIQUE = false;
   const MIN_GENERATE_COUNT = 10,
     MAX_GENERATE_COUNT = 30;
 
-  let start = INIT_START;
-  let end = INIT_END;
-  let count = INIT_COUNT;
+  let config = writable({
+    start: INIT_START,
+    end: INIT_END,
+    count: INIT_COUNT,
+    unique: INIT_UNIQUE
+  });
 
-  let unique = false;
+  onMount(() => {
+    if (typeof window === undefined) return;
+
+    loadConfig(window.localStorage, "numbers", config);
+
+    randomizeAll();
+  });
 
   let warnStartGtEnd = false;
-  $: warnStartGtEnd = fieldsInvalid.every((f) => !f) && start > end;
+  $: warnStartGtEnd = fieldsInvalid.every((f) => !f) && $config.start > $config.end;
 
   let warnAmountGtRange = false;
-  $: if (unique) {
+  $: if ($config.unique) {
+    const start = $config.start;
+    const end = $config.end;
+
     const [min, max] = start > end ? [end, start] : [start, end];
-    warnAmountGtRange = max - min + 1 < count;
+    warnAmountGtRange = max - min + 1 < $config.count;
   }
   const fieldsInvalid = [false, false, false];
 
@@ -35,6 +50,8 @@
   let boxPadding = ["p-2", "sm:p-4"];
 
   const randomize = async (index, finalValue) => {
+    const { start, end, count } = $config;
+
     const generateCount = mapToRange(index, 0, count - 1, MIN_GENERATE_COUNT, MAX_GENERATE_COUNT);
 
     const [min, max] = start > end ? [end, start] : [start, end];
@@ -64,11 +81,9 @@
     }
 
     let assumedLength = maxLength;
-    if (assumedLength >= 2) {
-      textSize[1] = "sm:text-4xl";
-    }
     if (assumedLength >= 3) {
       gridCols[0] = "grid-cols-3";
+      textSize[1] = "sm:text-4xl";
       if (count > 8) gridCols[1] = "sm:grid-cols-4";
     }
     if (assumedLength >= 4) {
@@ -87,9 +102,7 @@
   };
 
   const randomizeAll = async () => {
-    // allow some number to overflow where
-    // if (end > 99 * ALLOWED_NUMBER_OVERFLOW) gridCols[0] = "grid-cols-4";
-    // else gridCols[0] = "grid-cols-4";
+    const { start, end, count, unique } = $config;
 
     const [min, max] = start > end ? [end, start] : [start, end];
 
@@ -115,7 +128,6 @@
 
     numbers.length = randomizeCount;
   };
-  randomizeAll();
 </script>
 
 <div class={twMerge("mb-8 grid w-full gap-2 sm:gap-3", ...gridCols, PAGE_PADDING)}>
@@ -149,24 +161,27 @@
     aria-hidden="true"
   />
   <h1 class="mb-4 text-2xl font-bold sm:text-3xl">Random numbers</h1>
-  <div class="mb-6 w-full sm:w-fit" on:keyup={(e) => e.key == "Enter" && randomizeAll()}>
+  <div
+    class="mb-6 w-full sm:w-fit"
+    on:keyup={(e) => e.key == "Enter" && fieldsInvalid.every((f) => !f) && randomizeAll()}
+  >
     <div class="mb-3 flex w-full flex-wrap gap-4">
       <NumberInput
         label="From"
         maxDigits="8"
-        bind:intValue={start}
+        bind:intValue={$config.start}
         bind:isInvalid={fieldsInvalid[1]}
         warning={warnStartGtEnd}
-        initial={INIT_START}
+        initial={$config.start}
         class="w-36 grow"
       />
       <NumberInput
         label="To"
         maxDigits="8"
-        bind:intValue={end}
+        bind:intValue={$config.end}
         bind:isInvalid={fieldsInvalid[2]}
         warning={warnStartGtEnd}
-        initial={INIT_END}
+        initial={$config.end}
         class="w-36 grow"
       />
     </div>
@@ -174,10 +189,10 @@
       maxDigits="2"
       label="Amount"
       numberPattern={/^[0-9,]+$/}
-      bind:intValue={count}
+      bind:intValue={$config.count}
       bind:isInvalid={fieldsInvalid[0]}
       warning={warnAmountGtRange}
-      initial={INIT_COUNT}
+      initial={$config.count}
       class="mb-3 w-full"
     />
     <label class="flex w-fit items-center gap-1.5">
@@ -189,13 +204,16 @@
             "dark:border-transparent dark:bg-gray-700 dark:checked:bg-primary-600",
             "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50"
           )}
-          bind:checked={unique}
+          bind:checked={$config.unique}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          class={twMerge("absolute inset-0 m-0.5 text-white", unique ? "visible" : "invisible")}
+          class={twMerge(
+            "absolute inset-0 m-0.5 text-white",
+            $config.unique ? "visible" : "invisible"
+          )}
         >
           <path
             fill-rule="evenodd"
