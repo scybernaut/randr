@@ -23,5 +23,6 @@
   "type": "module",
   "dependencies": {
     "tailwind-merge": "^1.10.0"
-  }
+  },
+  "license": "gpl-3.0"
 }
