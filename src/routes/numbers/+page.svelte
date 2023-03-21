@@ -80,6 +80,14 @@
       boxPadding[1] = "sm:p-8";
     }
 
+    if (count <= 3) {
+      boxPadding[0] = "p-8";
+      textSize[0] = "text-4xl";
+
+      gridCols[0] = "grid-cols-2";
+      if (count == 3) gridCols[0] = "grid-cols-3";
+    }
+
     let assumedLength = maxLength;
     if (assumedLength >= 3) {
       gridCols[0] = "grid-cols-3";
