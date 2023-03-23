@@ -6,7 +6,7 @@
 
 <div class={PAGE_PADDING}>
   <div class="mb-6 mt-4 bg-green-200/0">
-    <h1 class="mb-1 text-3xl font-bold">Random generators</h1>
+    <h1 class="mb-1.5 text-3xl font-bold">Random generators</h1>
     <h2 class="text italic">Chaos is within your reach</h2>
   </div>
   <div class="relative mb-4 w-full items-center">

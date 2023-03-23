@@ -50,7 +50,7 @@
 
 <div
   class={twMerge(
-    "mx-auto flex w-full flex-col justify-center gap-8 sm:my-4 sm:flex-row-reverse",
+    "mx-auto flex w-full flex-col justify-center gap-8 sm:flex-row-reverse",
     PAGE_PADDING
   )}
 >
@@ -65,6 +65,9 @@
     </span>
   </div>
   <div class="flex-grow">
+    <h2 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      // Number
+    </h2>
     <h1 class="mb-6 text-2xl font-bold sm:text-3xl">Random number</h1>
     <div
       class="mb-4 flex w-full flex-wrap justify-start gap-4"

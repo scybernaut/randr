@@ -138,7 +138,13 @@
   };
 </script>
 
-<div class={twMerge("mb-8 grid w-full gap-2 sm:gap-3", ...gridCols, PAGE_PADDING)}>
+<div class={twMerge("mb-4 sm:mb-6", PAGE_PADDING)}>
+  <h2 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+    // Numbers
+  </h2>
+  <h1 class="text-2xl font-bold sm:text-3xl">Random numbers</h1>
+</div>
+<div class={twMerge("mb-4 grid w-full gap-2 sm:gap-3", ...gridCols, PAGE_PADDING)}>
   {#each numbers as number, i}
     <div
       class={twMerge(
@@ -160,20 +166,19 @@
 </div>
 <div
   class={twMerge(
-    "sticky -bottom-16 bg-gray-50 pt-4 pb-20 dark:bg-gray-900 sm:bottom-0",
+    "sticky bottom-0 mb-4 bg-gray-50 py-8 pt-4 dark:bg-gray-900 sm:bottom-0 sm:mb-16 sm:pt-6",
     PAGE_PADDING
   )}
 >
   <div
-    class="absolute top-0 left-0 right-0 z-10 h-8 -translate-y-full bg-gradient-to-t from-gray-50 dark:from-gray-900"
+    class="absolute top-0 left-0 right-0 z-10 h-4 -translate-y-full bg-gradient-to-t from-gray-50 dark:from-gray-900"
     aria-hidden="true"
   />
-  <h1 class="mb-4 text-2xl font-bold sm:text-3xl">Random numbers</h1>
   <div
-    class="mb-6 w-full sm:w-fit"
+    class="w-full sm:w-fit"
     on:keyup={(e) => e.key == "Enter" && fieldsInvalid.every((f) => !f) && randomizeAll()}
   >
-    <div class="mb-3 flex w-full flex-wrap gap-4">
+    <div class="mb-4 flex w-full flex-wrap gap-4">
       <NumberInput
         label="From"
         maxDigits="8"
@@ -192,50 +197,52 @@
         initial={$config.end}
         class="w-36 grow"
       />
-    </div>
-    <NumberInput
-      maxDigits="2"
-      label="Amount"
-      numberPattern={/^[0-9,]+$/}
-      bind:intValue={$config.count}
-      bind:isInvalid={fieldsInvalid[0]}
-      warning={warnAmountGtRange}
-      initial={$config.count}
-      class="mb-3 w-full"
-    />
-    <label class="flex w-fit items-center gap-1.5">
-      <div class="relative h-5 w-5">
-        <input
-          type="checkbox"
-          class={twMerge(
-            "absolute inset-0 appearance-none rounded border bg-white shadow-sm checked:bg-primary-600",
-            "dark:border-transparent dark:bg-gray-700 dark:checked:bg-primary-600",
-            "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50"
-          )}
-          bind:checked={$config.unique}
+      <div class="flex items-end gap-3">
+        <NumberInput
+          maxDigits="2"
+          label="Amount"
+          numberPattern={/^[0-9,]+$/}
+          bind:intValue={$config.count}
+          bind:isInvalid={fieldsInvalid[0]}
+          warning={warnAmountGtRange}
+          initial={$config.count}
+          class="w-36 grow"
         />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          class={twMerge(
-            "absolute inset-0 m-0.5 text-white",
-            $config.unique ? "visible" : "invisible"
-          )}
-        >
-          <path
-            fill-rule="evenodd"
-            d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-            clip-rule="evenodd"
-          />
-        </svg>
+        <label class="mb-2 flex w-fit items-center gap-1.5">
+          <div class="relative h-5 w-5">
+            <input
+              type="checkbox"
+              class={twMerge(
+                "absolute inset-0 appearance-none rounded border bg-white shadow-sm checked:bg-primary-600",
+                "dark:border-transparent dark:bg-gray-700 dark:checked:bg-primary-600",
+                "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50"
+              )}
+              bind:checked={$config.unique}
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class={twMerge(
+                "absolute inset-0 m-0.5 text-white",
+                $config.unique ? "visible" : "invisible"
+              )}
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <p class="mt-1">Unique</p>
+        </label>
       </div>
-      <p class="mt-1">Unique</p>
-    </label>
+    </div>
+    <Button on:click={randomizeAll} disabled={fieldsInvalid.some((f) => f)} class="w-full sm:w-max">
+      Generate
+    </Button>
   </div>
-  <Button on:click={randomizeAll} disabled={fieldsInvalid.some((f) => f)} class="w-full sm:w-max">
-    Generate
-  </Button>
 </div>
 <div class={twMerge("mb-8", PAGE_PADDING)}>
   <h1 class="mb-4 text-xl font-bold">More generators</h1>

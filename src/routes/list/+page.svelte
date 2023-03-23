@@ -100,9 +100,9 @@
 
 <div class={twMerge("mb-4", PAGE_PADDING)}>
   <h2 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-    Minimal
+    // List: Minimal
   </h2>
-  <h1 class="text-3xl font-bold">Random picker</h1>
+  <h1 class="text-2xl font-bold sm:text-3xl">Random picker</h1>
 </div>
 <div
   class={twMerge(
@@ -131,7 +131,7 @@
         </span>
       {/key}
     </div>
-    <Button on:click={generate} class="mt-4 w-full" disabled={isInvalid || isGenerating}>
+    <Button on:click={generate} class="mt-4 w-full sm:mb-8" disabled={isInvalid || isGenerating}>
       Generate
     </Button>
   </div>
