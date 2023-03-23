@@ -21,7 +21,7 @@
 
     loadConfig(window.localStorage, "list", config);
 
-    generate();
+    if ($config.inputText) generate();
   });
 
   let delim = "\n";
@@ -47,7 +47,6 @@
     const distances = alternates.map(Math.abs);
 
     const minDist = Math.min(...distances);
-    console.log("minimizeDelta", alternates, distances, minDist);
     return alternates[distances.lastIndexOf(minDist)];
   };
 
@@ -92,9 +91,7 @@
     shuffleArray(items);
     $config.inputText = items.join("\n");
 
-    pickedIndex = items.indexOf(picked);
-
-    console.log(pickedIndex, items);
+    pickedIndex = Math.max(items.indexOf(picked), 0);
   };
 </script>
 
