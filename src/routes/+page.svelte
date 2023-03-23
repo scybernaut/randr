@@ -2,6 +2,8 @@
   import Tools from "$lib/Tools.svelte";
   import { twMerge } from "tailwind-merge";
   import { PAGE_PADDING } from "$lib/utils.js";
+
+  let query = "";
 </script>
 
 <div class={PAGE_PADDING}>
@@ -34,7 +36,8 @@
       name="search"
       id="search"
       placeholder="Search"
+      bind:value={query}
     />
   </div>
-  <Tools class="text-lg" />
+  <Tools class="text-lg" {query} />
 </div>

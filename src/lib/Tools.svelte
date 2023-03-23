@@ -2,9 +2,10 @@
   import { twMerge } from "tailwind-merge";
 
   let exclude = null;
+  let query = "";
   let className = "";
 
-  export { exclude, className as class };
+  export { exclude, query, className as class };
 
   const TOOLS = [
     { id: "number", name: "Number", href: "/number" },
@@ -15,7 +16,18 @@
     { id: "moonblocks", name: "Moon Blocks (Jiaobei)", href: "/moonblocks", disabled: true }
   ];
 
-  const toolsToShow = TOOLS.filter((tool) => !tool.disabled && tool.id !== exclude);
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  }
+
+  let toolsToShow;
+  $: toolsToShow = TOOLS.filter((tool) => {
+    const q = escapeRegExp(query.toLowerCase());
+    const matchesQuery = [tool.id, tool.name].some((s) => s.toLowerCase().match(q));
+
+    return !tool.disabled && tool.id !== exclude && matchesQuery;
+  });
 </script>
 
 <div class={["grid gap-x-3 gap-y-3 sm:grid-cols-3", className].join(" ")}>
