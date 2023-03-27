@@ -33,9 +33,9 @@
   $: items = $config.inputText.split(delim).filter((s) => s && !s.match(/^\s+$/));
   $: isInvalid = items.length === 0;
 
-  const MIN_ANIM_COUNT = 50;
-  const MAX_ANIM_COUNT = 70;
-  const AVG_TIME_PER_ANIMATION = 200;
+  const MIN_ANIM_COUNT = 30;
+  const MAX_ANIM_COUNT = 50;
+  const TOTAL_ANIM_TIME = 9000;
 
   let flashing = false;
 
@@ -55,21 +55,55 @@
     let index = Math.floor(Math.random() * items.length);
     let randomAnimCount =
       Math.floor(Math.random() * (MAX_ANIM_COUNT - MIN_ANIM_COUNT + 1)) + MIN_ANIM_COUNT;
-    let randomAnimFinalIndex = (pickedIndex + randomAnimCount) % items.length;
+    let randomAnimFinalIndex = positiveMod(pickedIndex + randomAnimCount, items.length);
     let delta = index - randomAnimFinalIndex;
 
     let animCount = randomAnimCount + minimizeDelta(delta, items.length);
-
     console.debug("Animation count:", animCount);
-    console.debug("Total animation time:", AVG_TIME_PER_ANIMATION * animCount, "ms");
+
+    let overshoot = Math.random();
+    console.debug("Overshoot:", overshoot);
+    if (overshoot > 0.5) animCount--;
+
+    const getOpacity = (index) =>
+      ANIMATION_OPACITIES[positiveMod(index, ANIMATION_OPACITIES.length)];
+    const ease = (x) => easeInExpo(x / (animCount + overshoot));
     for (let i = 1; i <= animCount; i++) {
-      const animationDuration =
-        AVG_TIME_PER_ANIMATION *
-        animCount *
-        (easeInQuint(i / animCount) - easeInQuint((i - 1) / animCount));
-      const easing = i == animCount ? "easeOutBack" : "easeOutCubic";
-      await slide(animationDuration, easing).then(() => pickedIndex++);
+      const animationDuration = TOTAL_ANIM_TIME * (ease(i) - ease(i - 1));
+
+      await anime({
+        targets: animationSelctor,
+        translateY: "-100%",
+        opacity: (_, i) => getOpacity(i - 1),
+        duration: animationDuration,
+        easing: "linear"
+      }).finished;
+      pickedIndex++;
+      resetStyles();
     }
+
+    const overshootDuration = TOTAL_ANIM_TIME * (ease(animCount + overshoot) - ease(animCount));
+    console.debug("Overshoot Duration", overshootDuration);
+    await anime({
+      targets: animationSelctor,
+      translateY: `-${overshoot * 100}%`,
+      opacity: (_, i) => (getOpacity(i - 1) - getOpacity(i)) * overshoot + getOpacity(i),
+      duration: overshootDuration,
+      easing: "linear"
+    }).finished;
+
+    // await sleep(150);
+    await anime({
+      targets: animationSelctor,
+      translateY: overshoot > 0.5 ? "-100%" : "0%",
+      opacity: (_, i) => (overshoot > 0.5 ? getOpacity(i - 1) : getOpacity(i)),
+      duration: 300,
+      easing: "easeOutElastic"
+    }).finished;
+
+    if (overshoot > 0.5) pickedIndex++;
+    resetStyles();
+
     console.debug("Randomized result:", items[index]);
     $config.pickedIndex = index;
 
@@ -77,11 +111,20 @@
     isGenerating = false;
 
     flashing = true;
-    await sleep(150);
+    anime({
+      targets: "#roller > span:nth-of-type(4)",
+      scale: 1.5,
+      direction: "alternate",
+      duration: 150,
+      easing: "easeInQuad"
+    });
+    await sleep(200);
     flashing = false;
   };
 
   const easeInQuint = (x) => x ** 5;
+  const easeInExpo = (x) => (x === 0 ? 0 : Math.pow(2, 10 * x - 10));
+  const decelerateIn = (x) => 1 - Math.sqrt(1 - x);
 
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -93,7 +136,7 @@
   };
 
   const shuffle = () => {
-    const originalItem = items[pickedIndex];
+    const originalItem = items[positiveMod(pickedIndex, items.length)];
     shuffleArray(items);
     $config.inputText = items.join("\n");
 
@@ -102,26 +145,12 @@
   };
 
   const animationSelctor = "#roller > span";
+  const ANIMATION_OPACITIES = [0, 0.15, 0.25, 1, 0.25, 0.15, 0];
   const resetStyles = () =>
     anime.set(animationSelctor, {
       translateY: 0,
-      opacity: anime.stagger(-0.75, { start: 1, from: "center" }),
-      scale: anime.stagger(-0.5, { start: 1.25, from: "center" })
+      opacity: (_, i) => ANIMATION_OPACITIES[i]
     });
-  const slide = async (duration, easing) => {
-    const animation = anime({
-      targets: animationSelctor,
-      translateY: "-100%",
-      opacity: anime.stagger(-0.75, { start: 1, from: 3 }),
-      scale: anime.stagger(-0.5, { start: 1.25, from: 3 }),
-      duration: duration,
-      delay: 0,
-      endDelay: 0,
-      easing: easing
-    }).finished;
-
-    return animation.then(() => resetStyles());
-  };
 </script>
 
 <div class={twMerge("mb-4", PAGE_PADDING)}>
@@ -139,18 +168,21 @@
   <div class="mt-1">
     <div
       class={twMerge(
-        "flex flex-col items-center justify-center",
+        "relative flex flex-col items-center justify-center",
         "h-52 w-full overflow-hidden rounded-xl border bg-white p-6 shadow sm:h-72 sm:w-80",
         "dark:border-0 dark:bg-gray-800 dark:shadow-2xl"
       )}
       id="roller"
     >
-      {#each [-2, -1, 0, 1, 2] as offset}
+      <div class="absolute top-1/2 h-12 w-full -translate-y-1/2 bg-gray-700/50 md:h-16" />
+      {#each [-3, -2, -1, 0, 1, 2, 3] as offset}
         <span
           class={twMerge(
             "max-w-[80%] shrink-0 truncate py-2 text-2xl font-medium md:py-3 md:text-3xl",
-            flashing && "scale-125 text-primary-600 dark:text-primary-400"
+            "transition-colors duration-100 ease-out",
+            offset === 0 && flashing && "text-primary-600 dark:text-primary-400"
           )}
+          aria-hidden={offset !== 0}
         >
           {items[positiveMod(pickedIndex + offset, items.length)] ?? ""}
         </span>
