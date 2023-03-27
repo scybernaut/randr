@@ -12,6 +12,8 @@ export const mapToRange = (value, startFrom, endFrom, startTo, endTo) => {
   else return startTo + ((value - startFrom) * (endTo - startTo)) / (endFrom - startFrom);
 };
 
+export const positiveMod = (a, b) => ((a % b) + b) % b;
+
 export const loadConfig = (localStorage, id, configStore) => {
   const parsedConfig = JSON.parse(localStorage.getItem(id)) ?? {};
   configStore.set(Object.assign(get(configStore), parsedConfig));

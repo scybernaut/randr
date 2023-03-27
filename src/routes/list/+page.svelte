@@ -2,18 +2,20 @@
   import Button from "$lib/Button.svelte";
   import Tools from "$lib/Tools.svelte";
 
-  import { sleep, PAGE_PADDING, loadConfig } from "$lib/utils";
-  import { fly } from "svelte/transition";
-  import { quartOut } from "svelte/easing";
+  import { sleep, PAGE_PADDING, loadConfig, positiveMod } from "$lib/utils";
   import { twMerge } from "tailwind-merge";
 
   import { writable } from "svelte/store";
   import { onMount } from "svelte";
 
+  import anime from "animejs";
+
   const placeholder = "Liam\nOlivia\nNoah\nEmma";
+  let pickedIndex = 2;
 
   const config = writable({
-    inputText: placeholder
+    inputText: placeholder,
+    pickedIndex: pickedIndex
   });
 
   onMount(() => {
@@ -21,24 +23,19 @@
 
     loadConfig(window.localStorage, "list", config);
 
-    if ($config.inputText) generate();
+    pickedIndex = $config.pickedIndex;
+    resetStyles();
   });
 
   let delim = "\n";
   let items = [];
 
-  let waitTime = 125;
-
-  let timesUpdated = 0;
-
   $: items = $config.inputText.split(delim).filter((s) => s && !s.match(/^\s+$/));
   $: isInvalid = items.length === 0;
 
-  let picked = "Noah";
-  let pickedIndex = 2;
-
-  const MIN_PRE_UPDATES = 10;
-  const MAX_PRE_UPDATES = 20;
+  const MIN_ANIM_COUNT = 50;
+  const MAX_ANIM_COUNT = 70;
+  const AVG_TIME_PER_ANIMATION = 200;
 
   let flashing = false;
 
@@ -56,19 +53,25 @@
     isGenerating = true;
 
     let index = Math.floor(Math.random() * items.length);
-    let presentationUpdateCount =
-      Math.floor(Math.random() * (MAX_PRE_UPDATES - MIN_PRE_UPDATES + 1)) + MIN_PRE_UPDATES;
-    let presentationEndIndex = (pickedIndex + presentationUpdateCount) % items.length;
-    let delta = index - presentationEndIndex;
+    let randomAnimCount =
+      Math.floor(Math.random() * (MAX_ANIM_COUNT - MIN_ANIM_COUNT + 1)) + MIN_ANIM_COUNT;
+    let randomAnimFinalIndex = (pickedIndex + randomAnimCount) % items.length;
+    let delta = index - randomAnimFinalIndex;
 
-    let updateCount = presentationUpdateCount + minimizeDelta(delta, items.length);
+    let animCount = randomAnimCount + minimizeDelta(delta, items.length);
 
-    for (let i = 1; i <= updateCount; i++) {
-      picked = items[(pickedIndex + i) % items.length];
-      timesUpdated++;
-      await sleep(waitTime);
+    console.debug("Animation count:", animCount);
+    console.debug("Total animation time:", AVG_TIME_PER_ANIMATION * animCount, "ms");
+    for (let i = 1; i <= animCount; i++) {
+      const animationDuration =
+        AVG_TIME_PER_ANIMATION *
+        animCount *
+        (easeInQuint(i / animCount) - easeInQuint((i - 1) / animCount));
+      const easing = i == animCount ? "easeOutBack" : "easeOutCubic";
+      await slide(animationDuration, easing).then(() => pickedIndex++);
     }
-    pickedIndex = index;
+    console.debug("Randomized result:", items[index]);
+    $config.pickedIndex = index;
 
     await sleep(200); // wait *before* flashing
     isGenerating = false;
@@ -77,6 +80,8 @@
     await sleep(150);
     flashing = false;
   };
+
+  const easeInQuint = (x) => x ** 5;
 
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -88,10 +93,34 @@
   };
 
   const shuffle = () => {
+    const originalItem = items[pickedIndex];
     shuffleArray(items);
     $config.inputText = items.join("\n");
 
-    pickedIndex = Math.max(items.indexOf(picked), 0);
+    pickedIndex = Math.max(items.indexOf(originalItem), 0);
+    $config.pickedIndex = pickedIndex;
+  };
+
+  const animationSelctor = "#roller > span";
+  const resetStyles = () =>
+    anime.set(animationSelctor, {
+      translateY: 0,
+      opacity: anime.stagger(-0.75, { start: 1, from: "center" }),
+      scale: anime.stagger(-0.5, { start: 1.25, from: "center" })
+    });
+  const slide = async (duration, easing) => {
+    const animation = anime({
+      targets: animationSelctor,
+      translateY: "-100%",
+      opacity: anime.stagger(-0.75, { start: 1, from: 3 }),
+      scale: anime.stagger(-0.5, { start: 1.25, from: 3 }),
+      duration: duration,
+      delay: 0,
+      endDelay: 0,
+      easing: easing
+    }).finished;
+
+    return animation.then(() => resetStyles());
   };
 </script>
 
@@ -110,23 +139,22 @@
   <div class="mt-1">
     <div
       class={twMerge(
-        "relative h-52 w-full items-center justify-center gap-2 rounded-xl border bg-white p-6 shadow sm:h-72 sm:w-72",
+        "flex flex-col items-center justify-center",
+        "h-52 w-full overflow-hidden rounded-xl border bg-white p-6 shadow sm:h-72 sm:w-80",
         "dark:border-0 dark:bg-gray-800 dark:shadow-2xl"
       )}
+      id="roller"
     >
-      {#key timesUpdated}
+      {#each [-2, -1, 0, 1, 2] as offset}
         <span
           class={twMerge(
-            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-            "text-3xl font-medium transition-all duration-150 ease-out",
+            "max-w-[80%] shrink-0 truncate py-2 text-2xl font-medium md:py-3 md:text-3xl",
             flashing && "scale-125 text-primary-600 dark:text-primary-400"
           )}
-          in:fly={{ y: -40, duration: waitTime, easing: quartOut }}
-          out:fly={{ y: 40, duration: waitTime, easing: quartOut }}
         >
-          {picked}
+          {items[positiveMod(pickedIndex + offset, items.length)] ?? ""}
         </span>
-      {/key}
+      {/each}
     </div>
     <Button on:click={generate} class="mt-4 w-full sm:mb-8" disabled={isInvalid || isGenerating}>
       Generate
