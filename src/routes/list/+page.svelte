@@ -174,7 +174,9 @@
       )}
       id="roller"
     >
-      <div class="absolute top-1/2 h-12 w-full -translate-y-1/2 bg-gray-700/50 md:h-16" />
+      <div
+        class="absolute top-1/2 h-12 w-full -translate-y-1/2 border-y bg-gray-100 dark:border-gray-700 dark:bg-gray-700/50 md:h-16"
+      />
       {#each [-3, -2, -1, 0, 1, 2, 3] as offset}
         <span
           class={twMerge(
