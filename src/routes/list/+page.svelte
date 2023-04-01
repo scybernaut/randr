@@ -71,13 +71,22 @@
     for (let i = 1; i <= animCount; i++) {
       const animationDuration = TOTAL_ANIM_TIME * (ease(i) - ease(i - 1));
 
-      await anime({
-        targets: animationSelctor,
-        translateY: "-100%",
-        opacity: (_, i) => getOpacity(i - 1),
-        duration: animationDuration,
-        easing: "linear"
-      }).finished;
+      const animations = [
+        anime({
+          targets: animationSelctor,
+          translateY: "-100%",
+          duration: animationDuration,
+          easing: "linear"
+        }).finished,
+        anime({
+          targets: animationSelctor,
+          opacity: (_, i) => getOpacity(i - 1),
+          duration: animationDuration * 0.8,
+          delay: animationDuration * 0.1,
+          easing: "easeInOutExpo"
+        }).finished
+      ];
+      await Promise.all(animations);
       pickedIndex++;
       resetStyles();
     }
