@@ -66,7 +66,7 @@
 
 <div class="" on:keydown={({ key }) => key === "Escape" && closeDropdown()}>
   <header
-    class={"fixed left-0 right-0 top-0 z-50 h-16 border-b border-gray-200 bg-white dark:border-0 dark:bg-gray-900"}
+    class={"fixed left-0 right-0 top-0 z-40 h-16 border-b border-gray-200 bg-white dark:border-0 dark:bg-gray-900"}
   >
     <div class="mx-auto flex h-full max-w-screen-md items-center justify-between p-4 px-6 sm:px-8">
       <a class="text-xl font-bold" href="/">
@@ -119,7 +119,6 @@
                 src={THEME_INFO[theme].icon}
                 class="inline h-5 w-5 fill-current"
                 theme="round"
-                aria-hidden="true"
               />
               {THEME_INFO[theme].text}
             </button>

@@ -17,6 +17,14 @@
     data-sveltekit-preload-data="hover"
     class="bg-gray-50 font-body text-gray-900 selection:bg-primary-500/40 dark:bg-gray-900 dark:text-gray-50"
   >
+    <noscript
+      class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70"
+      aria-role="modal"
+    >
+      <div class="m-5 rounded bg-white p-5 font-medium">
+        JavaScript is required to run this tool.
+      </div>
+    </noscript>
     <div class="contents">%sveltekit.body%</div>
   </body>
 </html>
