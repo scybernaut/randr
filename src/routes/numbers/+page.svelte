@@ -8,6 +8,9 @@
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
 
+  import { Icon } from "@steeze-ui/svelte-icon";
+  import { Check } from "@steeze-ui/material-design-icons";
+
   const INIT_START = 1,
     INIT_END = 10,
     INIT_COUNT = 8,
@@ -171,7 +174,7 @@
   )}
 >
   <div
-    class="absolute top-0 left-0 right-0 z-10 h-4 -translate-y-full bg-gradient-to-t from-gray-50 dark:from-gray-900"
+    class="absolute left-0 right-0 top-0 z-10 h-4 -translate-y-full bg-gradient-to-t from-gray-50 dark:from-gray-900"
     aria-hidden="true"
   />
   <div
@@ -219,21 +222,14 @@
               )}
               bind:checked={$config.unique}
             />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              class={twMerge(
-                "absolute inset-0 m-0.5 text-white",
-                $config.unique ? "visible" : "invisible"
-              )}
-            >
-              <path
-                fill-rule="evenodd"
-                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                clip-rule="evenodd"
+            {#if $config.unique}
+              <Icon
+                src={Check}
+                size="16px"
+                class="absolute inset-0 m-0.5 fill-current text-white"
+                theme="round"
               />
-            </svg>
+            {/if}
           </div>
           <p class="mt-1">Unique</p>
         </label>

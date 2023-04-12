@@ -84,8 +84,12 @@
           on:click={() => (showThemeDropdown = !showThemeDropdown)}
           aria-labelledby="themeButtonLabel"
         >
-          <Icon src={THEME_INFO[$config.theme].icon} class="inline h-5 w-5 fill-current" />
-          <Icon src={ArrowDropDown} class="inline h-4 w-4 fill-current" />
+          <Icon
+            src={THEME_INFO[$config.theme].icon}
+            class="inline h-5 w-5 fill-current"
+            theme="round"
+          />
+          <Icon src={ArrowDropDown} class="inline h-4 w-4 fill-current" theme="round" />
         </button>
         <dialog
           class={twMerge(
@@ -111,7 +115,12 @@
                 closeDropdown();
               }}
             >
-              <Icon src={THEME_INFO[theme].icon} class="inline h-5 w-5 fill-current" />
+              <Icon
+                src={THEME_INFO[theme].icon}
+                class="inline h-5 w-5 fill-current"
+                theme="round"
+                aria-hidden="true"
+              />
               {THEME_INFO[theme].text}
             </button>
           {/each}

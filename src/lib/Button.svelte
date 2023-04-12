@@ -3,6 +3,7 @@
   let moreClasses = "";
   export let disabled = false;
   export let colored = true;
+  export let label = undefined;
 
   export { moreClasses as class };
 </script>
@@ -21,6 +22,7 @@
     moreClasses
   )}
   {disabled}
+  aria-label={label}
 >
   <slot>Start</slot>
 </button>

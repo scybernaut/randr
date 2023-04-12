@@ -8,6 +8,9 @@
   import { writable } from "svelte/store";
   import { onMount } from "svelte";
 
+  import { Icon } from "@steeze-ui/svelte-icon";
+  import { Shuffle } from "@steeze-ui/material-design-icons";
+
   import anime from "animejs";
 
   const placeholder = "Liam\nOlivia\nNoah\nEmma";
@@ -131,9 +134,7 @@
     flashing = false;
   };
 
-  const easeInQuint = (x) => x ** 5;
   const easeInExpo = (x) => (x === 0 ? 0 : Math.pow(2, 10 * x - 10));
-  const decelerateIn = (x) => 1 - Math.sqrt(1 - x);
 
   const shuffleArray = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -170,7 +171,7 @@
 </div>
 <div
   class={twMerge(
-    "mx-auto my-1 flex w-full flex-col justify-center gap-8 sm:my-4 sm:flex-row",
+    "mx-auto my-1 flex w-full flex-col justify-center gap-8 sm:my-4 sm:flex-row sm:items-start",
     PAGE_PADDING
   )}
 >
@@ -203,42 +204,30 @@
       Generate
     </Button>
   </div>
-  <div class="flex-grow">
-    <label class="mb-2 block">
-      <p class="mb-1 block font-medium">Items</p>
-      <div class="relative">
-        <textarea
-          cols="30"
-          rows="8"
-          {placeholder}
-          class={twMerge(
-            "block w-full rounded border bg-white px-3 py-2 leading-relaxed shadow-sm",
-            "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50",
-            "placeholder:text-gray-300 dark:placeholder:text-gray-500",
-            "dark:border-transparent dark:bg-gray-800 dark:shadow focus-visible:dark:border-primary-500"
-          )}
-          bind:value={$config.inputText}
-        />
-        <Button
-          on:click={shuffle}
-          colored={false}
-          class="absolute bottom-3 right-3 p-2 shadow-sm dark:bg-gray-700 dark:hover:bg-gray-600 dark:hover:active:bg-gray-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            class="h-5 w-5"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M15.312 11.424a5.5 5.5 0 01-9.201 2.466l-.312-.311h2.433a.75.75 0 000-1.5H3.989a.75.75 0 00-.75.75v4.242a.75.75 0 001.5 0v-2.43l.31.31a7 7 0 0011.712-3.138.75.75 0 00-1.449-.39zm1.23-3.723a.75.75 0 00.219-.53V2.929a.75.75 0 00-1.5 0V5.36l-.31-.31A7 7 0 003.239 8.188a.75.75 0 101.448.389A5.5 5.5 0 0113.89 6.11l.311.31h-2.432a.75.75 0 000 1.5h4.243a.75.75 0 00.53-.219z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </Button>
-      </div>
+  <div class="relative flex-grow">
+    <label class="block">
+      <span class="mb-1 block font-medium">Items</span>
+      <textarea
+        cols="30"
+        rows="8"
+        {placeholder}
+        class={twMerge(
+          "block w-full rounded border bg-white px-3 py-2 leading-relaxed shadow-sm",
+          "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50",
+          "placeholder:text-gray-300 dark:placeholder:text-gray-500",
+          "dark:border-transparent dark:bg-gray-800 dark:shadow focus-visible:dark:border-primary-500"
+        )}
+        bind:value={$config.inputText}
+      />
     </label>
+    <Button
+      on:click={shuffle}
+      colored={false}
+      class="absolute bottom-3 right-3 p-2 shadow dark:bg-gray-700 dark:hover:bg-gray-600 dark:hover:active:bg-gray-700"
+      label="Shuffle items"
+    >
+      <Icon src={Shuffle} class="h-5 w-5 fill-current" theme="round" />
+    </Button>
   </div>
 </div>
 <div class={twMerge("mt-8", PAGE_PADDING)}>
