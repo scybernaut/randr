@@ -39,6 +39,7 @@
   const MIN_ANIM_COUNT = 30;
   const MAX_ANIM_COUNT = 50;
   const TOTAL_ANIM_TIME = 9000;
+  const QUICK_ANIM_TIME = 800;
 
   let flashing = false;
 
@@ -51,77 +52,126 @@
   };
 
   let isGenerating = false;
+  let stopAnimation = false;
+  let isStopping = false;
   const generate = async () => {
     if (isGenerating) return;
     isGenerating = true;
 
     let index = Math.floor(Math.random() * items.length);
-    let randomAnimCount =
+    let randomRollCount =
       Math.floor(Math.random() * (MAX_ANIM_COUNT - MIN_ANIM_COUNT + 1)) + MIN_ANIM_COUNT;
-    let randomAnimFinalIndex = positiveMod(pickedIndex + randomAnimCount, items.length);
-    let delta = index - randomAnimFinalIndex;
+    let randomRollFinalIndex = positiveMod(pickedIndex + randomRollCount, items.length);
+    let delta = index - randomRollFinalIndex;
 
-    let animCount = randomAnimCount + minimizeDelta(delta, items.length);
-    console.debug("Animation count:", animCount);
+    let totalRollCount = randomRollCount + minimizeDelta(delta, items.length);
+    console.debug("Total rolls:", totalRollCount);
 
     let overshoot = Math.random();
     console.debug("Overshoot:", overshoot);
-    if (overshoot > 0.5) animCount--;
+    let rollCountBeforeOvershoot = totalRollCount - (overshoot > 0.5 ? 1 : 0);
+    console.debug("Roll with overshoot:", rollCountBeforeOvershoot + overshoot);
 
     const getOpacity = (index) =>
       ANIMATION_OPACITIES[positiveMod(index, ANIMATION_OPACITIES.length)];
-    const ease = (x) => easeInExpo(x / (animCount + overshoot));
-    for (let i = 1; i <= animCount; i++) {
-      const animationDuration = TOTAL_ANIM_TIME * (ease(i) - ease(i - 1));
+    const ease = (currentRoll, totalRolls = rollCountBeforeOvershoot + overshoot) =>
+      easeInExpo(currentRoll / totalRolls);
 
-      const animations = [
-        anime({
-          targets: animationSelctor,
-          translateY: "-100%",
-          duration: animationDuration,
-          easing: "linear"
-        }).finished,
-        anime({
-          targets: animationSelctor,
-          opacity: (_, i) => getOpacity(i - 1),
-          duration: animationDuration * 0.8,
-          delay: animationDuration * 0.1,
-          easing: "easeInOutExpo"
-        }).finished
-      ];
-      await Promise.all(animations);
-      pickedIndex++;
-      resetStyles();
+    class RollAnimationStop {
+      constructor(completed) {
+        this.completed = completed;
+      }
+
+      toString() {
+        return "Animation Stopped";
+      }
     }
 
-    const overshootDuration = TOTAL_ANIM_TIME * (ease(animCount + overshoot) - ease(animCount));
-    console.debug("Overshoot Duration", overshootDuration);
-    await anime({
-      targets: animationSelctor,
-      translateY: `-${overshoot * 100}%`,
-      opacity: (_, i) => (getOpacity(i - 1) - getOpacity(i)) * overshoot + getOpacity(i),
-      duration: overshootDuration,
-      easing: "linear"
-    }).finished;
+    const animateRoll = async (
+      startIndex = 1,
+      endIndex = rollCountBeforeOvershoot,
+      totalDuration = TOTAL_ANIM_TIME,
+      totalRolls = undefined
+    ) => {
+      for (let i = startIndex; i <= endIndex; i++) {
+        const animationDuration = totalDuration * (ease(i, totalRolls) - ease(i - 1, totalRolls));
 
-    // await sleep(150);
-    await anime({
-      targets: animationSelctor,
-      translateY: overshoot > 0.5 ? "-100%" : "0%",
-      opacity: (_, i) => (overshoot > 0.5 ? getOpacity(i - 1) : getOpacity(i)),
-      duration: 300,
-      easing: "easeOutElastic"
-    }).finished;
+        const animations = [
+          anime({
+            targets: animationSelctor,
+            translateY: "-100%",
+            duration: animationDuration,
+            easing: "linear"
+          }),
+          anime({
+            targets: animationSelctor,
+            opacity: (_, i) => getOpacity(i - 1),
+            duration: animationDuration * 0.8,
+            delay: animationDuration * 0.1,
+            easing: "easeInOutExpo"
+          })
+        ];
+        await Promise.all(animations.map((a) => a.finished));
+        pickedIndex++;
+        resetStyles();
 
-    if (overshoot > 0.5) pickedIndex++;
-    resetStyles();
+        if (stopAnimation) throw new RollAnimationStop(i);
+      }
+    };
+
+    const animateOvershoot = async (totalDuration = TOTAL_ANIM_TIME) => {
+      const overshootDuration =
+        totalDuration *
+        (ease(rollCountBeforeOvershoot + overshoot) - ease(rollCountBeforeOvershoot));
+      console.debug("Overshoot Duration", overshootDuration);
+      await anime({
+        targets: animationSelctor,
+        translateY: `-${overshoot * 100}%`,
+        opacity: (_, i) => (getOpacity(i - 1) - getOpacity(i)) * overshoot + getOpacity(i),
+        duration: overshootDuration,
+        easing: "linear"
+      }).finished;
+    };
+
+    const animateSnap = async () => {
+      await anime({
+        targets: animationSelctor,
+        translateY: overshoot > 0.5 ? "-100%" : "0%",
+        opacity: (_, i) => (overshoot > 0.5 ? getOpacity(i - 1) : getOpacity(i)),
+        duration: 300,
+        easing: "easeOutElastic"
+      }).finished;
+
+      if (overshoot > 0.5) pickedIndex++;
+      resetStyles();
+    };
+
+    try {
+      await animateRoll();
+      await animateOvershoot();
+      await animateSnap();
+    } catch (error) {
+      console.debug(error);
+      if (error instanceof RollAnimationStop) {
+        isStopping = true;
+        stopAnimation = false;
+        await animateRoll(error.completed + 1, totalRollCount, QUICK_ANIM_TIME, totalRollCount); // roll quickly to the randomized result;
+      } else {
+        throw error;
+      }
+    }
 
     console.debug("Randomized result:", items[index]);
     $config.pickedIndex = index;
 
     await sleep(200); // wait *before* flashing
     isGenerating = false;
+    isStopping = false;
 
+    flashResult();
+  };
+
+  const flashResult = async () => {
     flashing = true;
     anime({
       targets: "#roller > span:nth-of-type(4)",
@@ -200,9 +250,22 @@
         </span>
       {/each}
     </div>
-    <Button on:click={generate} class="mt-4 w-full sm:mb-8" disabled={isInvalid || isGenerating}>
-      Generate
-    </Button>
+    <div class="mt-4 flex w-full flex-col items-center gap-2 sm:mb-8">
+      <Button on:click={generate} class="w-full" disabled={isInvalid || isGenerating}
+        >Generate</Button
+      >
+      <Button
+        class={twMerge(
+          "!bg-transparent px-4 text-base font-medium text-primary-600 shadow-none transition-opacity delay-500 duration-300 ease-in hover:text-primary-500",
+          "dark:text-primary-400 hover:dark:text-primary-300",
+          "disabled:pointer-events-none disabled:opacity-0 disabled:delay-0"
+        )}
+        disabled={!isGenerating || isStopping}
+        on:click={() => (stopAnimation = true)}
+      >
+        Skip animation
+      </Button>
+    </div>
   </div>
   <div class="relative flex-grow">
     <label class="block">
