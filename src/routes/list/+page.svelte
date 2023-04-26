@@ -221,7 +221,7 @@
 </div>
 <div
   class={twMerge(
-    "mx-auto my-1 flex w-full flex-col justify-center gap-8 sm:my-4 sm:flex-row sm:items-start",
+    "mx-auto my-1 flex w-full flex-col justify-center gap-1 sm:my-4 sm:flex-row sm:items-start sm:gap-8",
     PAGE_PADDING
   )}
 >
@@ -250,13 +250,13 @@
         </span>
       {/each}
     </div>
-    <div class="mt-4 flex w-full flex-col items-center gap-2 sm:mb-8">
+    <div class="mt-4 flex w-full flex-col items-center gap-2">
       <Button on:click={generate} class="w-full" disabled={isInvalid || isGenerating}
         >Generate</Button
       >
       <Button
         class={twMerge(
-          "!bg-transparent px-4 text-base font-medium text-primary-600 shadow-none transition-opacity delay-500 duration-300 ease-in hover:text-primary-500",
+          "!bg-transparent px-4 py-1.5 text-sm font-medium text-primary-600 shadow-none transition-opacity delay-700 duration-300 ease-in hover:text-primary-500 sm:py-2.5 sm:text-base",
           "dark:text-primary-400 hover:dark:text-primary-300",
           "disabled:pointer-events-none disabled:opacity-0 disabled:delay-0"
         )}
@@ -269,10 +269,10 @@
   </div>
   <div class="relative flex-grow">
     <label class="block">
-      <span class="mb-1 block font-medium">Items</span>
+      <span class="mb-1.5 block font-medium">Items</span>
       <textarea
         cols="30"
-        rows="8"
+        rows="12"
         {placeholder}
         class={twMerge(
           "block w-full rounded border bg-white px-3 py-2 leading-relaxed shadow-sm",
@@ -288,6 +288,7 @@
       colored={false}
       class="absolute bottom-3 right-3 p-2 shadow dark:bg-gray-700 dark:hover:bg-gray-600 dark:hover:active:bg-gray-700"
       label="Shuffle items"
+      disabled={isGenerating}
     >
       <Icon src={Shuffle} class="h-5 w-5 fill-current" theme="round" />
     </Button>
