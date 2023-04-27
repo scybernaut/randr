@@ -237,7 +237,7 @@
       <div
         class="absolute top-1/2 h-12 w-full -translate-y-1/2 border-y bg-gray-100 dark:border-gray-700 dark:bg-gray-700/50 md:h-16"
       />
-      {#each [-3, -2, -1, 0, 1, 2, 3] as offset}
+      {#each [-3, -2, -1, 0, 1, 2, 3] as offset, i}
         <span
           class={twMerge(
             "max-w-[80%] shrink-0 truncate py-2 text-2xl font-medium md:py-3 md:text-3xl",
@@ -245,6 +245,8 @@
             offset === 0 && flashing && "text-primary-600 dark:text-primary-400"
           )}
           aria-hidden={offset !== 0}
+          style:opacity={ANIMATION_OPACITIES[i].toString()}
+          style:transform="translateY(0px)"
         >
           {items[positiveMod(pickedIndex + offset, items.length)] ?? ""}
         </span>
