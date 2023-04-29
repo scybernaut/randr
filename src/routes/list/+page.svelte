@@ -253,9 +253,9 @@
       {/each}
     </div>
     <div class="mt-4 flex w-full flex-col items-center gap-2">
-      <Button on:click={generate} class="w-full" disabled={isInvalid || isGenerating}
-        >Generate</Button
-      >
+      <Button on:click={generate} class="w-full" disabled={isInvalid || isGenerating}>
+        Generate
+      </Button>
       <Button
         class={twMerge(
           "!bg-transparent px-4 py-1.5 text-sm font-medium text-primary-600 shadow-none transition-opacity delay-700 duration-300 ease-in hover:text-primary-500 sm:py-2.5 sm:text-base",
@@ -271,7 +271,7 @@
   </div>
   <div class="relative flex-grow">
     <label class="block">
-      <span class="mb-1.5 block font-medium">Items</span>
+      <span class="block mb-1.5 font-medium">Items</span>
       <textarea
         cols="30"
         rows="12"
@@ -288,7 +288,7 @@
     <Button
       on:click={shuffle}
       colored={false}
-      class="absolute bottom-3 right-3 p-2 shadow dark:bg-gray-700 dark:hover:bg-gray-600 dark:hover:active:bg-gray-700"
+      class="dark:enabled:active;bg-gray-500 absolute bottom-3 right-3 p-2 shadow"
       label="Shuffle items"
       disabled={isGenerating}
     >
