@@ -1,6 +1,6 @@
 <script>
   import NumberInput from "$lib/NumberInput.svelte";
-  import Button from "$lib/Button.svelte";
+  import Button from "$lib/UnifiedButton.svelte";
   import Tools from "$lib/Tools.svelte";
   import { twMerge } from "tailwind-merge";
 
@@ -216,26 +216,28 @@
             <input
               type="checkbox"
               class={twMerge(
-                "absolute inset-0 appearance-none rounded border bg-white shadow-sm checked:bg-primary-600",
+                "absolute inset-0 appearance-none rounded border bg-white shadow-sm checked:border-primary-400 checked:bg-primary-600",
+                "transition-all duration-100",
                 "dark:border-transparent dark:bg-gray-700 dark:checked:bg-primary-600",
-                "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50"
+                "outline-none ring-offset-1 focus-visible:ring-2 focus-visible:ring-secondary-500"
               )}
               bind:checked={$config.unique}
             />
-            {#if $config.unique}
-              <Icon
-                src={Check}
-                size="16px"
-                class="absolute inset-0 m-0.5 fill-current text-white"
-                theme="round"
-              />
-            {/if}
+            <Icon
+              src={Check}
+              size="16px"
+              class={twMerge(
+                "absolute inset-0 m-0.5 fill-current text-white transition-opacity",
+                !$config.unique && "opacity-0"
+              )}
+              theme="round"
+            />
           </div>
           <p class="mt-1">Unique</p>
         </label>
       </div>
     </div>
-    <Button on:click={randomizeAll} disabled={fieldsInvalid.some((f) => f)} class="w-full sm:w-max">
+    <Button on:click={randomizeAll} disabled={fieldsInvalid.some((f) => f)} class="w-full sm:w-fit">
       Generate
     </Button>
   </div>

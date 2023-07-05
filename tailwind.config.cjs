@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const colors = require("tailwindcss/colors");
+const plugin = require("tailwindcss/plugin");
 
 module.exports = {
   darkMode: "class",
@@ -13,7 +14,8 @@ module.exports = {
     extend: {
       colors: {
         primary: colors.indigo,
-        secondary: colors.pink,
+        secondary: colors.blue,
+        accent: colors.pink,
         gray: colors.slate
       },
       minWidth: {
@@ -27,5 +29,10 @@ module.exports = {
       }
     }
   },
-  plugins: []
+  plugins: [
+    plugin(({ addVariant }) => {
+      addVariant("e", "&:not(:disabled)");
+      addVariant("activated", "&:is(:active,.activated)");
+    })
+  ]
 };

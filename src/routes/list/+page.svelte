@@ -1,5 +1,5 @@
 <script>
-  import Button from "$lib/Button.svelte";
+  import Button from "$lib/UnifiedButton.svelte";
   import Tools from "$lib/Tools.svelte";
 
   import { sleep, PAGE_PADDING, loadConfig, positiveMod } from "$lib/utils";
@@ -252,18 +252,19 @@
         </span>
       {/each}
     </div>
-    <div class="mt-4 flex w-full flex-col items-center gap-2">
+    <div class="mt-4 flex w-full flex-col items-center gap-3">
       <Button on:click={generate} class="w-full" disabled={isInvalid || isGenerating}>
         Generate
       </Button>
       <Button
-        class={twMerge(
-          "!bg-transparent px-4 py-1.5 text-sm font-medium text-primary-600 shadow-none transition-opacity delay-700 duration-300 ease-in hover:text-primary-500 sm:py-2.5 sm:text-base",
-          "dark:text-primary-400 hover:dark:text-primary-300",
-          "disabled:pointer-events-none disabled:opacity-0 disabled:delay-0"
-        )}
+        emphasis="tertiary"
         disabled={!isGenerating || isStopping}
         on:click={() => (stopAnimation = true)}
+        class={twMerge(
+          "py-1 text-sm disabled:pointer-events-none sm:py-1 sm:text-base",
+          "disabled:opacity-0 disabled:delay-0",
+          "transition-opacity delay-700 duration-500"
+        )}
       >
         Skip animation
       </Button>
@@ -271,26 +272,27 @@
   </div>
   <div class="relative flex-grow">
     <label class="block">
-      <span class="block mb-1.5 font-medium">Items</span>
+      <span class="mb-1.5 block font-medium">Items</span>
       <textarea
         cols="30"
         rows="12"
         {placeholder}
         class={twMerge(
-          "block w-full rounded border bg-white px-3 py-2 leading-relaxed shadow-sm",
-          "outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-opacity-50",
+          "block w-full rounded border bg-white px-3 py-2 leading-relaxed shadow",
+          "outline-none focus-visible:ring-2 focus-visible:ring-secondary-500",
           "placeholder:text-gray-300 dark:placeholder:text-gray-500",
-          "dark:border-transparent dark:bg-gray-800 dark:shadow focus-visible:dark:border-primary-500"
+          "dark:border-transparent dark:bg-gray-800"
         )}
         bind:value={$config.inputText}
       />
     </label>
     <Button
       on:click={shuffle}
-      colored={false}
-      class="dark:enabled:active;bg-gray-500 absolute bottom-3 right-3 p-2 shadow"
+      emphasis="secondary"
       label="Shuffle items"
       disabled={isGenerating}
+      isIconOnly
+      class="absolute bottom-3 right-3"
     >
       <Icon src={Shuffle} class="h-5 w-5 fill-current" theme="round" />
     </Button>

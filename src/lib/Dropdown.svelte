@@ -4,7 +4,8 @@
   import { twMerge } from "tailwind-merge";
 
   import { Icon } from "@steeze-ui/svelte-icon";
-  import { ArrowDropDown } from "@steeze-ui/material-design-icons";
+  import { ArrowDropDown, Check } from "@steeze-ui/material-design-icons";
+  import Button from "$lib/UnifiedButton.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -12,13 +13,12 @@
   export let selectedIndex = undefined;
 
   export let label;
-  export let transparent = false;
+  export let flat = false;
   export let alignStart = false;
 
   let moreClasses = "";
   export { moreClasses as class };
 
-  export let buttonClasses = "";
   export let dialogClasses = "";
 
   let showDropdown = false;
@@ -31,16 +31,11 @@
   use:clickOutside
   on:clickoutside={closeDropdown}
 >
-  <button
-    class={twMerge(
-      "flex w-full items-center justify-between rounded p-2 pr-1 transition-colors",
-      "border border-transparent hover:border-gray-300 hover:bg-gray-100",
-      "dark:hover:border-transparent dark:hover:bg-gray-800",
-      transparent || "border-inherit bg-white shadow dark:border-transparent dark:bg-gray-800",
-      showDropdown &&
-        "!border-primary-300 !bg-primary-100 dark:!border-transparent dark:!bg-gray-700",
-      buttonClasses
-    )}
+  <Button
+    emphasis="secondary"
+    {flat}
+    isIconOnly
+    class={twMerge("flex items-center p-2 pr-1", showDropdown && "activated")}
     on:click={() => (showDropdown = !showDropdown)}
     aria-labelledby="themeButtonLabel"
   >
@@ -52,12 +47,12 @@
       <span class="mx-1">{options[selectedIndex].text}</span>
     {/if}
     <Icon src={ArrowDropDown} class="inline h-4 w-4 fill-current" theme="round" />
-  </button>
+  </Button>
   <dialog
     class={twMerge(
       alignStart ? "end-auto start-0" : "end-0 start-auto",
       "invisible absolute top-full mt-1 flex w-max min-w-full flex-col rounded border border-gray-200 bg-white p-0 py-px text-inherit shadow-lg open:visible",
-      "dark:border-gray-700 dark:bg-gray-900",
+      "dark:border-gray-700 dark:bg-gray-800 dark:shadow-lg dark:shadow-gray-900",
       "-translate-y-5 opacity-0 transition-all duration-200 ease-in-out open:translate-y-0 open:opacity-100",
       dialogClasses
     )}
@@ -66,12 +61,12 @@
   >
     <h2 class="px-3.5 pb-1.5 pt-2 font-bold" id="themeButtonLabel">{label}</h2>
     {#each options as option, i}
-      <button
+      <Button
+        emphasis="secondary"
+        flat
         class={twMerge(
-          "my-px flex items-center gap-2 border-y border-transparent py-1.5 pl-3.5 pr-4 text-start",
-          (selectedIndex === i &&
-            "border-primary-700 bg-primary-600 text-white hover:border-primary-800 hover:bg-primary-700") ||
-            "hover:border-primary-300 hover:bg-primary-100 dark:hover:border-primary-700 dark:hover:bg-primary-900"
+          "flex items-center gap-2 py-2",
+          selectedIndex === i && "font-semibold text-primary-700 dark:text-primary-300"
         )}
         on:click={() => {
           selectedIndex = i;
@@ -83,7 +78,15 @@
           <Icon src={option.icon} class="inline h-5 w-5 fill-current" theme="round" />
         {/if}
         <span class:ml-1={!option.icon}>{option.text}</span>
-      </button>
+        <Icon
+          src={Check}
+          class={twMerge(
+            "ml-auto box-content inline h-5 w-5 fill-current pl-2",
+            selectedIndex !== i && "invisible"
+          )}
+          theme="round"
+        />
+      </Button>
     {/each}
   </dialog>
 </div>

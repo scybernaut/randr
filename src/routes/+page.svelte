@@ -24,7 +24,7 @@
       class={twMerge(
         "w-full rounded border bg-white px-3 py-2 pl-10 shadow-sm placeholder:text-gray-400",
         "dark:border-transparent dark:bg-gray-800",
-        "outline-none ring-primary-500 ring-opacity-50 focus-visible:border-primary-500 focus-visible:ring-2"
+        "outline-none ring-secondary-500 focus-visible:ring-2"
       )}
       type="text"
       name="search"

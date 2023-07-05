@@ -1,5 +1,5 @@
 <script>
-  import Button from "$lib/Button.svelte";
+  import Button from "$lib/UnifiedButton.svelte";
   import Tools from "$lib/Tools.svelte";
   import { sleep, PAGE_PADDING, loadConfig } from "$lib/utils";
   import NumberInput from "$lib/NumberInput.svelte";
@@ -90,7 +90,7 @@
         initial={$config.end}
       />
     </div>
-    <Button on:click={generate} class="w-full sm:w-max" disabled={invalidStart || invalidEnd}>
+    <Button on:click={generate} class="w-full sm:w-fit" disabled={invalidStart || invalidEnd}>
       Generate
     </Button>
   </div>

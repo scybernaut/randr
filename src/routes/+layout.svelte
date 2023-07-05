@@ -64,14 +64,14 @@
   >
     <div class="mx-auto flex h-full max-w-screen-md items-center justify-between p-4 px-6 sm:px-8">
       <a class="text-xl font-bold" href="/">
-        randr<span class="text-secondary-600 dark:text-secondary-500">.</span>
+        randr<span class="text-accent-600 dark:text-accent-500">.</span>
       </a>
       <Dropdown
         options={THEMES}
         selectedIndex={THEMES.findIndex((theme) => theme.id === $config.theme)}
         label="Theme"
         on:pick={({ detail: id }) => ($config.theme = id)}
-        transparent
+        flat
       />
     </div>
   </header>
