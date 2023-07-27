@@ -10,6 +10,7 @@
 
   import { Icon } from "@steeze-ui/svelte-icon";
   import { Check } from "@steeze-ui/material-design-icons";
+  import RandomizerHeader from "$lib/RandomizerHeader.svelte";
 
   const INIT_START = 1,
     INIT_END = 10,
@@ -142,10 +143,7 @@
 </script>
 
 <div class={twMerge("mb-4 sm:mb-6", PAGE_PADDING)}>
-  <h2 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-    // Numbers
-  </h2>
-  <h1 class="text-2xl font-bold sm:text-3xl">Random numbers</h1>
+  <RandomizerHeader decorText="Numbers" headerText="Random numbers" />
 </div>
 <div class={twMerge("mb-4 grid w-full gap-2 sm:gap-3", ...gridCols, PAGE_PADDING)}>
   {#each numbers as number, i}
@@ -174,7 +172,7 @@
   )}
 >
   <div
-    class="absolute left-0 right-0 top-0 z-10 h-4 -translate-y-full bg-gradient-to-t from-gray-50 dark:from-gray-900"
+    class="absolute left-0 right-0 top-0 z-10 h-4 bg-gradient-to-t from-gray-50 -translate-y-full dark:from-gray-900"
     aria-hidden="true"
   />
   <div

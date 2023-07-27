@@ -22,3 +22,5 @@ export const loadConfig = (localStorage, id, configStore) => {
     localStorage.setItem(id, JSON.stringify(newConfig));
   });
 };
+
+export const capitalizeFirst = (text) => (text ? text[0].toUpperCase() + text.slice(1) : "");

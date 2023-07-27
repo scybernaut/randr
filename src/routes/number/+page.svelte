@@ -7,6 +7,7 @@
 
   import { writable } from "svelte/store";
   import { onMount } from "svelte";
+  import RandomizerHeader from "$lib/RandomizerHeader.svelte";
 
   const config = writable({
     start: 1,
@@ -65,12 +66,9 @@
     </span>
   </div>
   <div class="flex-grow">
-    <h2 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-      // Number
-    </h2>
-    <h1 class="mb-6 text-2xl font-bold sm:text-3xl">Random number</h1>
+    <RandomizerHeader decorText="number" headerText="Random number" />
     <div
-      class="mb-4 flex w-full flex-wrap justify-start gap-4"
+      class="mb-4 mt-6 flex w-full flex-wrap justify-start gap-4"
       on:keyup={(e) => e.key == "Enter" && !(invalidStart || invalidEnd) && generate()}
     >
       <NumberInput

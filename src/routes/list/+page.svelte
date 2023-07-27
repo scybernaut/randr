@@ -12,6 +12,7 @@
   import { Shuffle } from "@steeze-ui/material-design-icons";
 
   import anime from "animejs";
+  import RandomizerHeader from "$lib/RandomizerHeader.svelte";
 
   const placeholder = "Liam\nOlivia\nNoah\nEmma";
   let pickedIndex = 2;
@@ -214,10 +215,7 @@
 </script>
 
 <div class={twMerge("mb-4", PAGE_PADDING)}>
-  <h2 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-    // List: Minimal
-  </h2>
-  <h1 class="text-2xl font-bold sm:text-3xl">Random picker</h1>
+  <RandomizerHeader decorText="List" headerText="Random item" />
 </div>
 <div
   class={twMerge(
@@ -235,7 +233,7 @@
       id="roller"
     >
       <div
-        class="absolute top-1/2 h-12 w-full -translate-y-1/2 border-y bg-gray-100 dark:border-gray-700 dark:bg-gray-700/50 md:h-16"
+        class="absolute top-1/2 h-12 w-full border-y bg-gray-100 -translate-y-1/2 dark:border-gray-700 dark:bg-gray-700/50 md:h-16"
       />
       {#each [-3, -2, -1, 0, 1, 2, 3] as offset, i}
         <span
