@@ -63,7 +63,10 @@
     class={"fixed left-0 right-0 top-0 z-40 h-16 border-b border-gray-200 bg-white dark:border-0 dark:bg-gray-900"}
   >
     <div class="mx-auto flex h-full max-w-screen-md items-center justify-between p-4 px-6 sm:px-8">
-      <a class="text-xl font-bold" href="/">
+      <a
+        class="rounded-sm text-xl font-bold outline-none ring-secondary-500 ring-offset-2 ring-offset-white focus-visible:ring dark:ring-offset-gray-900"
+        href="/"
+      >
         randr<span class="text-accent-600 dark:text-accent-500">.</span>
       </a>
       <Dropdown
@@ -72,6 +75,7 @@
         label="Theme"
         on:pick={({ detail: id }) => ($config.theme = id)}
         flat
+        bind:showDropdown={showThemeDropdown}
       />
     </div>
   </header>

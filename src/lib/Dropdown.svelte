@@ -21,7 +21,7 @@
 
   export let dialogClasses = "";
 
-  let showDropdown = false;
+  export let showDropdown = false;
 
   const closeDropdown = () => (showDropdown = false);
 </script>

@@ -14,7 +14,7 @@
   import anime from "animejs";
   import RandomizerHeader from "$lib/RandomizerHeader.svelte";
 
-  const placeholder = "Liam\nOlivia\nNoah\nEmma";
+  const placeholder = "Scandium\nYttrium\nBeryllium\nRadon\nGold\nThulium";
   let pickedIndex = 2;
 
   const config = writable({
@@ -212,6 +212,9 @@
       translateY: 0,
       opacity: (_, i) => ANIMATION_OPACITIES[i]
     });
+
+  let reducedSize = false;
+  $: reducedSize = items.reduce((acc, cur) => acc + cur.length, 0) / items.length >= 13;
 </script>
 
 <div class={twMerge("mb-4", PAGE_PADDING)}>
@@ -227,20 +230,21 @@
     <div
       class={twMerge(
         "relative flex flex-col items-center justify-center",
-        "h-52 w-full overflow-hidden rounded-xl border bg-white p-6 shadow sm:h-72 sm:w-80",
+        "h-52 w-full overflow-hidden rounded-xl border bg-white p-4 shadow sm:h-72 sm:w-80",
         "dark:border-0 dark:bg-gray-800 dark:shadow-2xl"
       )}
       id="roller"
     >
       <div
-        class="absolute top-1/2 h-12 w-full border-y bg-gray-100 -translate-y-1/2 dark:border-gray-700 dark:bg-gray-700/50 md:h-16"
+        class="absolute top-1/2 h-12 w-full -translate-y-1/2 border-y bg-gray-100 dark:border-gray-700 dark:bg-gray-700/50 md:h-16"
       />
       {#each [-3, -2, -1, 0, 1, 2, 3] as offset, i}
         <span
           class={twMerge(
             "max-w-[80%] shrink-0 truncate py-2 text-2xl font-medium md:py-3 md:text-3xl",
             "transition-colors duration-100 ease-out",
-            offset === 0 && flashing && "text-primary-600 dark:text-primary-400"
+            offset === 0 && flashing && "text-primary-600 dark:text-primary-400",
+            reducedSize && "text-xl md:text-2xl"
           )}
           aria-hidden={offset !== 0}
           style:opacity={ANIMATION_OPACITIES[i].toString()}
