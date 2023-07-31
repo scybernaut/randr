@@ -16,7 +16,8 @@ module.exports = {
         primary: colors.indigo,
         secondary: colors.blue,
         accent: colors.pink,
-        gray: colors.slate
+        gray: colors.slate,
+        scybergreen: "#00d455"
       },
       minWidth: {
         68: "17rem"
