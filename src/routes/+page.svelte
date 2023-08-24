@@ -4,7 +4,8 @@
   import { PAGE_PADDING } from "$lib/utils.js";
 
   import { Icon } from "@steeze-ui/svelte-icon";
-  import { Search } from "@steeze-ui/material-design-icons";
+  import { Search, Close } from "@steeze-ui/material-design-icons";
+  import Button from "$lib/UnifiedButton.svelte";
 
   let query = "";
 </script>
@@ -33,6 +34,18 @@
       bind:value={query}
       aria-label="Search"
     />
+    {#if query}
+      <Button
+        emphasis="tertiary"
+        class="absolute right-2 top-1/2 -translate-y-1/2 p-1"
+        flat
+        isIconOnly
+        label="Clear search"
+        on:click={() => (query = "")}
+      >
+        <Icon src={Close} class="h-5 w-5 fill-current text-gray-600 dark:text-gray-300" />
+      </Button>
+    {/if}
   </div>
   <Tools class="text-lg" {query} />
 </div>

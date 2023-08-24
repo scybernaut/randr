@@ -33,16 +33,20 @@
   });
 </script>
 
-<div class={["grid gap-x-3 gap-y-3 sm:grid-cols-3", className].join(" ")}>
-  {#each toolsToShow as tool}
-    <Button
-      isLink={true}
-      class="flex items-center justify-between"
-      emphasis="secondary"
-      href={tool.href}
-    >
-      <h1 class="font-medium">{tool.name}</h1>
-      <Icon src={ArrowForward} class="h-5 w-5 fill-current" theme="round" aria-hidden="true" />
-    </Button>
-  {/each}
-</div>
+{#if query && toolsToShow.length === 0}
+  <p class="my-6 text-center text-gray-500">No match found.</p>
+{:else}
+  <div class={["grid gap-x-3 gap-y-3 sm:grid-cols-3", className].join(" ")}>
+    {#each toolsToShow as tool}
+      <Button
+        isLink={true}
+        class="flex items-center justify-between"
+        emphasis="secondary"
+        href={tool.href}
+      >
+        <h1 class="font-medium">{tool.name}</h1>
+        <Icon src={ArrowForward} class="h-5 w-5 fill-current" theme="round" aria-hidden="true" />
+      </Button>
+    {/each}
+  </div>
+{/if}
