@@ -1,23 +1,21 @@
 <script>
   import Button from "$lib/UnifiedButton.svelte";
   import Tools from "$lib/Tools.svelte";
-  import { sleep, PAGE_PADDING, loadConfig } from "$lib/utils";
+  import { sleep, PAGE_PADDING } from "$lib/utils";
   import NumberInput from "$lib/NumberInput.svelte";
   import { twMerge } from "tailwind-merge";
 
-  import { writable } from "svelte/store";
+  import { persisted } from "svelte-local-storage-store";
   import { onMount } from "svelte";
   import RandomizerHeader from "$lib/RandomizerHeader.svelte";
 
-  const config = writable({
+  const config = persisted("number", {
     start: 1,
     end: 10
   });
 
   onMount(() => {
     if (typeof window === "undefined") return;
-
-    loadConfig(window.localStorage, "number", config);
 
     generate();
   });

@@ -14,13 +14,4 @@ export const mapToRange = (value, startFrom, endFrom, startTo, endTo) => {
 
 export const positiveMod = (a, b) => ((a % b) + b) % b;
 
-export const loadConfig = (localStorage, id, configStore) => {
-  const parsedConfig = JSON.parse(localStorage.getItem(id)) ?? {};
-  configStore.set(Object.assign(get(configStore), parsedConfig));
-
-  configStore.subscribe((newConfig) => {
-    localStorage.setItem(id, JSON.stringify(newConfig));
-  });
-};
-
 export const capitalizeFirst = (text) => (text ? text[0].toUpperCase() + text.slice(1) : "");

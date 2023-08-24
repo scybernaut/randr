@@ -2,10 +2,10 @@
   import Button from "$lib/UnifiedButton.svelte";
   import Tools from "$lib/Tools.svelte";
 
-  import { sleep, PAGE_PADDING, loadConfig, positiveMod } from "$lib/utils";
+  import { sleep, PAGE_PADDING, positiveMod } from "$lib/utils";
   import { twMerge } from "tailwind-merge";
 
-  import { writable } from "svelte/store";
+  import { persisted } from "svelte-local-storage-store";
   import { onMount } from "svelte";
 
   import { Icon } from "@steeze-ui/svelte-icon";
@@ -17,15 +17,13 @@
   const placeholder = "Scandium\nYttrium\nBeryllium\nRadon\nGold\nThulium";
   let pickedIndex = 2;
 
-  const config = writable({
+  const config = persisted("list", {
     inputText: placeholder,
     pickedIndex: pickedIndex
   });
 
   onMount(() => {
     if (typeof window === "undefined") return;
-
-    loadConfig(window.localStorage, "list", config);
 
     pickedIndex = $config.pickedIndex;
     resetStyles();

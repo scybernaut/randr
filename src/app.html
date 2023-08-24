@@ -26,6 +26,16 @@
         JavaScript is required to run this tool.
       </div>
     </noscript>
+    <script>
+      let theme = JSON.parse(localStorage.getItem("theme"));
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+
+      document.documentElement.classList.remove("light", "dark");
+      if (theme === "auto") theme = systemTheme;
+      document.documentElement.classList.add(theme ?? systemTheme);
+    </script>
     <div class="contents">%sveltekit.body%</div>
   </body>
 </html>

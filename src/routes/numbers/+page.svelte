@@ -4,9 +4,9 @@
   import Tools from "$lib/Tools.svelte";
   import { twMerge } from "tailwind-merge";
 
-  import { sleep, mapToRange, PAGE_PADDING, loadConfig } from "$lib/utils.js";
+  import { sleep, mapToRange, PAGE_PADDING } from "$lib/utils.js";
+  import { persisted } from "svelte-local-storage-store";
   import { onMount } from "svelte";
-  import { writable } from "svelte/store";
 
   import { Icon } from "@steeze-ui/svelte-icon";
   import { Check } from "@steeze-ui/material-design-icons";
@@ -19,7 +19,7 @@
   const MIN_GENERATE_COUNT = 10,
     MAX_GENERATE_COUNT = 30;
 
-  let config = writable({
+  let config = persisted("numbers", {
     start: INIT_START,
     end: INIT_END,
     count: INIT_COUNT,
@@ -28,8 +28,6 @@
 
   onMount(() => {
     if (typeof window === undefined) return;
-
-    loadConfig(window.localStorage, "numbers", config);
 
     randomizeAll();
   });
@@ -172,7 +170,7 @@
   )}
 >
   <div
-    class="absolute left-0 right-0 top-0 z-10 h-4 bg-gradient-to-t from-gray-50 -translate-y-full dark:from-gray-900"
+    class="absolute left-0 right-0 top-0 z-10 h-4 -translate-y-full bg-gradient-to-t from-gray-50 dark:from-gray-900"
     aria-hidden="true"
   />
   <div

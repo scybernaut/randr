@@ -1,18 +1,16 @@
 <script>
   import "../app.css";
   import { onMount } from "svelte";
-  import { writable } from "svelte/store";
   import { twMerge } from "tailwind-merge";
 
-  import { PAGE_PADDING, loadConfig } from "$lib/utils.js";
+  import { persisted } from "svelte-local-storage-store";
+  import { PAGE_PADDING } from "$lib/utils.js";
 
   import Dropdown from "$lib/Dropdown.svelte";
 
   import { Brightness4, LightMode, DarkMode } from "@steeze-ui/material-design-icons";
 
-  const config = writable({
-    theme: "auto" // "auto" | "light" | "dark"
-  });
+  const theme = persisted("theme", "auto"); // "auto" | "light" | "dark"
 
   const THEMES = [
     {
@@ -37,19 +35,18 @@
 
     let schemePrefsQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-    const setTheme = (theme) => {
+    const setTheme = (themeValue) => {
       const prefersDark = schemePrefsQuery.matches;
       document.documentElement.classList.remove("light", "dark");
 
-      if (theme === "auto") document.documentElement.classList.add(prefersDark ? "dark" : "light");
-      else document.documentElement.classList.add(theme);
+      if (themeValue === "auto")
+        document.documentElement.classList.add(prefersDark ? "dark" : "light");
+      else document.documentElement.classList.add(themeValue);
     };
 
-    schemePrefsQuery.addEventListener("change", () => setTheme($config.theme));
+    schemePrefsQuery.addEventListener("change", () => setTheme($theme));
 
-    loadConfig(window.localStorage, "global", config);
-
-    config.subscribe(({ theme }) => setTheme(theme));
+    theme.subscribe((theme) => setTheme(theme));
   });
 
   let showThemeDropdown = false;
@@ -86,9 +83,9 @@
       </a>
       <Dropdown
         options={THEMES}
-        selectedIndex={THEMES.findIndex((theme) => theme.id === $config.theme)}
+        selectedIndex={THEMES.findIndex((themeInfo) => themeInfo.id === $theme)}
         label="Theme"
-        on:pick={({ detail: id }) => ($config.theme = id)}
+        on:pick={({ detail: id }) => ($theme = id)}
         flat
         bind:showDropdown={showThemeDropdown}
       />
